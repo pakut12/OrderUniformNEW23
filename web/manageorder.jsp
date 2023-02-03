@@ -46,7 +46,8 @@
                             <button class="btn btn-success btn-sm w-100" type="button" onclick="uploadfile()" >Upload</button>
                         </div>
                     </form>
-                    
+                    <div id="mytable">
+                    </div>
                 </div>
             </div>
             
@@ -60,6 +61,7 @@
                 var file = document.getElementById('fileexcel').files[0];
                 var formdata = new FormData(); 
                 formdata.append('fileexcel', file);
+    
                 $.ajax({
                     type: "POST",
                     encType: "multipart/form-data",
@@ -70,6 +72,10 @@
                     data: formdata,
                     success: function(data){
                         console.log(data);
+                        $("#mytable").html(data);
+                        $("#table_upload").DataTable({
+                            scrollX: true
+                        });
                     },
                     error: function(msg){
                         console.log(msg);
@@ -77,6 +83,7 @@
                         $('div.d-flex.flex-column.align-items-center.justify-content-center').attr('id', 'loadscreen');
                     }
                 });
+                
             }
             
             $(document).ready(function() {

@@ -5,6 +5,7 @@
 package com.pg.lib.Servlet;
 
 import com.pg.lib.model.OUUploadOrder;
+import com.pg.lib.service.OrderService;
 import com.pg.lib.service.ReadExcelService;
 import java.io.*;
 import java.net.*;
@@ -35,31 +36,81 @@ public class UploadFile extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            String type = request.getParameter("");
+            String type = request.getParameter("type");
+
+
             try {
                 UploadFileService file = new UploadFileService();
                 HashMap<String, String> list = file.checkMultiContent(request, "uploadorder");
-
                 ReadExcelService readfile = new ReadExcelService();
                 List<OUUploadOrder> listorder = readfile.ReadOrder(list);
-
+                OrderService ordersv = new OrderService();
+                
+                System.out.println(ordersv.createSqlText(listorder));
+                String html = "";
+                html += "<div class='text-center'>OrderListUpload</div>";
+                html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_upload'>";
+                html += "<thead>";
+                html += "<tr>";
+                html += "<th>ลำดับ</th>";
+                html += "<th>เลขที่เอกสาร</th>";
+                html += "<th>รหัสพนักงาน</th>";
+                html += "<th>ชื่อนามสกุล</th>";
+                html += "<th>บริษัท</th>";
+                html += "<th>เเผนก</th>";
+                html += "<th>รหัสสินค้า</th>";
+                html += "<th>รหัสบาร์โค้ด</th>";
+                html += "<th>ชื่อสินค้า</th>";
+                html += "<th>material group</th>";
+                html += "<th>ชื่อ material group</th>";
+                html += "<th>จำนวนที่ขาย</th>";
+                html += "<th>ต้นทุน</th>";
+                html += "<th>ราคาขาย</th>";
+                html += " </tr>";
+                html += " </thead>";
+                html += "<tbody id='data_exportexcel'>";
+                int n = 1;
                 for (OUUploadOrder orderdetail : listorder) {
-                    System.out.println(orderdetail.getReceipt_id());
-                    System.out.println(orderdetail.getOrder_cms_id());
-                    System.out.println(orderdetail.getOrder_cms_fullname());
-                    System.out.println(orderdetail.getOrder_cms_company());
-                    System.out.println(orderdetail.getOrder_cms_department());
-                    System.out.println(orderdetail.getOrder_product_id());
-                    System.out.println(orderdetail.getOrder_product_barcode());
-                    System.out.println(orderdetail.getOrder_product_name());
-                    System.out.println(orderdetail.getOrder_mat_group());
-                    System.out.println(orderdetail.getOrder_mat_name());
-                    System.out.println(orderdetail.getOrder_product_qty());
-                    System.out.println(orderdetail.getOrder_price_inc_vat());
-                    System.out.println(orderdetail.getOrder_price_exc_vat());
-                    System.out.println("------------------------------------------------------------------------------------------------------");
+                    html += "<tr>";
+                    html += "<td>" + n + "</td>";
+                    html += "<td>" + orderdetail.getReceipt_id() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_cms_id() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_cms_fullname() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_cms_company() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_cms_department() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_product_id() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_product_barcode() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_product_name() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_mat_group() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_mat_name() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_product_qty() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_price_inc_vat() + "</td>";
+                    html += "<td>" + orderdetail.getOrder_price_inc_vat() + "</td>";
+                    html += "</tr>";
+                    n++;
                 }
+                html += "</tbody>";
+                html += "</table>";
 
+                /*
+                for (OUUploadOrder orderdetail : listorder) {
+                System.out.println(orderdetail.getReceipt_id());
+                System.out.println(orderdetail.getOrder_cms_id());
+                System.out.println(orderdetail.getOrder_cms_fullname());
+                System.out.println(orderdetail.getOrder_cms_company());
+                System.out.println(orderdetail.getOrder_cms_department());
+                System.out.println(orderdetail.getOrder_product_id());
+                System.out.println(orderdetail.getOrder_product_barcode());
+                System.out.println(orderdetail.getOrder_product_name());
+                System.out.println(orderdetail.getOrder_mat_group());
+                System.out.println(orderdetail.getOrder_mat_name());
+                System.out.println(orderdetail.getOrder_product_qty());
+                System.out.println(orderdetail.getOrder_price_inc_vat());
+                System.out.println(orderdetail.getOrder_price_exc_vat());
+                System.out.println("------------------------------------------------------------------------------------------------------");
+                }
+                 */
+                out.print(html);
 
 
 
