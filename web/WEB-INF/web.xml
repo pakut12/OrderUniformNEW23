@@ -12,6 +12,10 @@
         <servlet-name>UploadFile</servlet-name>
         <servlet-class>com.pg.lib.Servlet.UploadFile</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DownloadMasterPos</servlet-name>
+        <servlet-class>com.pg.lib.Servlet.DownloadMasterPos</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Chklogin</servlet-name>
         <url-pattern>/Chklogin</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>UploadFile</servlet-name>
         <url-pattern>/UploadFile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DownloadMasterPos</servlet-name>
+        <url-pattern>/DownloadMasterPos</url-pattern>
     </servlet-mapping>
     <session-config>
     <session-timeout>

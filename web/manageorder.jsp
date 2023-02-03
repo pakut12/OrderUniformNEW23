@@ -33,14 +33,14 @@
                             <h5 class="card-title fw-bold">คำเเนะนำ</h5>
                             <p class="card-text">
                             <ol>
-                                <li>ต้องอัพโหดลไฟล์ที่โหลดออกจากโปรเเกรม POS เท่านั้น</li>
-                                <li>หากเกิดปัญหาติดต่อ Support</li>
+                                <li>ต้องอัพโหลดไฟล์ที่โหลดออกจากโปรเเกรม POS เท่านั้น</li>
+                                <li>หากเกิดปัญหากรุณาติดต่อ Support</li>
                             </ol>
                         </div>
                         <hr>
                         <div class="mb-3">
                             <label for="formFile" class="form-label">File</label>
-                            <input class="form-control form-control-sm" type="file" id="formFile" accept=".xlsx">
+                            <input class="form-control form-control-sm" type="file" id="fileexcel" accept=".xls">
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-success btn-sm w-100" type="button" onclick="uploadfile()" >Upload</button>
@@ -57,9 +57,9 @@
         <script>
             
             function uploadfile(){
-                
-                var formdata = new FormData(document.getElementById('form_oreder')); 
-              
+                var file = document.getElementById('fileexcel').files[0];
+                var formdata = new FormData(); 
+                formdata.append('fileexcel', file);
                 $.ajax({
                     type: "POST",
                     encType: "multipart/form-data",

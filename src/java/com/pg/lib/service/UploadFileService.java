@@ -22,7 +22,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  */
 public class UploadFileService {
 
-    private final String pathAttachfileLocalhost = "C:/Users/pakutsing/Desktop/Github/OrderUniformByPos/web/attachfile/";
+    private final String pathAttachfileLocalhost = "C:/Users/pakutsing/Desktop/Github/OrderUniformByPos2023/web/attachfile/";
     private final String pathAttachfileOnServer = "/web/webapps/OrderUniform/attachfile/";
 
     public HashMap<String, String> checkMultiContent(HttpServletRequest request, String content) throws UnsupportedEncodingException {
@@ -38,6 +38,7 @@ public class UploadFileService {
 
                 //Loop check content FormData;
                 while (iterator.hasNext()) {
+                  
                     FileItem item = (FileItem) iterator.next();
 
                     //Item for Upload
@@ -102,4 +103,5 @@ public class UploadFileService {
 
         return currentMili;
     }
+    
 }

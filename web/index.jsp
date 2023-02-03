@@ -16,7 +16,7 @@
         <img src="img/logo.png" class="img-fluid">
         <div class="container">
             <form action="Chklogin" method="POST"> 
-                <div class="card mt-5 col-sm-12 col-md-6 mx-auto ">
+                <div class="card mt-5 col-sm-12 col-md-5 mx-auto ">
                     <div class="card-header ">
                         Login
                     </div>
