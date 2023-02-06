@@ -21,7 +21,7 @@ public class ConnectDB {
         //Connection con = (Connection) DriverManager.getConnection("jdbc:oracle:thin:@10.0.62.18:1521:stock", "comp", "pmoc4");
 
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:4306/mydb?useUnicode=true&characterEncoding=UTF-8" +
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:4306/mypos?useUnicode=true&characterEncoding=UTF-8" +
                 "&user=root&password=");
         return con;
     }

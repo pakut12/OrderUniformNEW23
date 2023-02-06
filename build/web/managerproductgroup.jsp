@@ -135,7 +135,8 @@
                                     extend: 'excel',
                                     title:null,
                                     filename: filename
-                                }]
+                                }
+                            ]
                         });
                     }
                 })
@@ -171,7 +172,7 @@
             }
         
             function printbarcode(){
-                window.open("report/ReportProductGroup.jsp?listproductgroup="+product_group,"_blank", "height=600,width=800,left=200,top=200");
+                window.open("DownloadMasterPos?type=printproductgroup&productgroup="+product_group,"_blank", "height=600,width=800,left=200,top=200");
             }
 
             $(document).ready(function(){

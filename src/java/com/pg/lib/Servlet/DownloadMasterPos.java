@@ -9,7 +9,13 @@ import com.pg.lib.service.ProductGroupService;
 import java.io.*;
 import java.net.*;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -25,7 +31,7 @@ public class DownloadMasterPos extends HttpServlet {
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -35,8 +41,8 @@ public class DownloadMasterPos extends HttpServlet {
                     //รับค่า ProductGroup เป็น Array มา
                     String[] listproductgroup = request.getParameterValues("productgroup[]");
                     String product_plant = request.getParameter("product_plant");
-                    ProductGroupService pd = new ProductGroupService();
                     //เอาค่า Array มาค้นหาใน Database
+                    ProductGroupService pd = new ProductGroupService();
                     List<OUProductGroup> list = pd.getProductGroup(listproductgroup);
 
                     //เอาค่าที่ได้จาก Databese มาเเสดงในตาราง
@@ -48,7 +54,8 @@ public class DownloadMasterPos extends HttpServlet {
                     HTMLtag += "<th>MatNo</th>";
                     HTMLtag += "<th>Barcode</th>";
                     HTMLtag += "<th>Name</th>";
-                    // HTMLtag += "<th>MatGroup</th>";
+                    HTMLtag += "<th>MatGroup</th>";
+                    HTMLtag += "<th>MatGroupName</th>";
                     HTMLtag += "<th>Price(Exc Vat)</th>";
                     HTMLtag += "<th>Price(Inc Vat)</th>";
                     HTMLtag += "<th>Plant</th>";
@@ -69,7 +76,8 @@ public class DownloadMasterPos extends HttpServlet {
                         HTMLtag += "<td>" + x.getMat_no() + "</td>";
                         HTMLtag += "<td>" + x.getMat_barcode() + "</td>";
                         HTMLtag += "<td>" + x.getMat_name_th() + "</td>";
-                        //HTMLtag += "<td>" + x.getMat_group() + "</td>";
+                        HTMLtag += "<td></td>";
+                        HTMLtag += "<td></td>";
                         HTMLtag += "<td>" + price + "</td>";
                         HTMLtag += "<td>" + pricesumvat + "</td>";
                         HTMLtag += "<td>" + x.getPlant() + "</td>";
@@ -84,6 +92,23 @@ public class DownloadMasterPos extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else if (type.equals("printproductgroup")) {
+                //รับค่า ProductGroup เป็น Array มา
+                String[] listproductgroup = request.getParameter("productgroup").split(",");
+
+                //เอาค่า Array มาค้นหาใน Database
+                ProductGroupService pd = new ProductGroupService();
+                List<OUProductGroup> list = pd.getProductGroup(listproductgroup);
+
+                SimpleDateFormat fm = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date date = new Date();
+
+                // ทำการ set เพื่อส่งค่าที่ได้จาก Databese ไปยัง printproductgroup.jsp            
+                request.setAttribute("listproductgroup", list);
+                request.setAttribute("productgroup", listproductgroup);
+                request.setAttribute("datenow", fm.format(date));
+
+                getServletContext().getRequestDispatcher("/printproductgroup.jsp").forward(request, response);
             }
         } finally {
             out.close();
@@ -98,7 +123,15 @@ public class DownloadMasterPos extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
@@ -108,7 +141,15 @@ public class DownloadMasterPos extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(DownloadMasterPos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
