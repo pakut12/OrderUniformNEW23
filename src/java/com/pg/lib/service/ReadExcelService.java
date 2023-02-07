@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,6 +26,23 @@ public class ReadExcelService {
     private final String pathAttachfileLocalhost = "C:/Users/pakutsing/Desktop/Github/OrderUniformByPos2023/web/attachfile/";
     private final String pathAttachfileOnServer = "/web/webapps/OrderUniform/attachfile/";
 
+    public Boolean ChkOrder(HashMap<String, String> order) throws IOException {
+        Boolean ChkExcel = null;
+        FileInputStream fileInputStream = new FileInputStream(pathAttachfileLocalhost + order.get("path"));
+        HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
+        HSSFSheet worksheet = workbook.getSheetAt(0);
+        HSSFRow row = worksheet.getRow(0);
+        int lastCellNum = row.getLastCellNum();
+        
+        if (lastCellNum == 14) {
+            ChkExcel = true;
+        } else {
+            ChkExcel = false;
+        }
+        return ChkExcel;
+
+    }
+
     public List<OUUploadOrder> ReadOrder(HashMap<String, String> order) throws IOException {
 
         List<OUUploadOrder> listorder = new LinkedList<OUUploadOrder>();
@@ -37,11 +55,13 @@ public class ReadExcelService {
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 //skip column name at first row
+
                 if (row.getRowNum() == 0) {
                     continue;
                 }
                 Iterator<Cell> cellIterator = row.cellIterator();
                 OUUploadOrder orderdetail = new OUUploadOrder();
+
                 while (cellIterator.hasNext()) {
 
                     Cell cell = cellIterator.next();

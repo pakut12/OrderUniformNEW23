@@ -38,9 +38,19 @@
                             </ol>
                         </div>
                         <hr>
-                        <div class="mb-3">
-                            <label for="formFile" class="form-label">File</label>
-                            <input class="form-control form-control-sm" type="file" id="fileexcel" accept=".xls">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="mb-3">
+                                    <label for="formFile" class="form-label">Doc Name : </label>
+                                    <input class="form-control form-control-sm" type="text" id="doc_name" >
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div class="mb-3">
+                                    <label for="formFile" class="form-label">File : </label>
+                                    <input class="form-control form-control-sm" type="file" id="fileexcel" accept=".xls">
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-success btn-sm w-100" type="button" onclick="uploadfile()" >Upload</button>
@@ -58,10 +68,13 @@
         <script>
             
             function uploadfile(){
+                var docname = $("#doc_name").val();     
                 var file = document.getElementById('fileexcel').files[0];
                 var formdata = new FormData(); 
-                formdata.append('fileexcel', file);
-    
+                formdata.append('doc_name', docname);
+                formdata.append('uploadorder', file);
+                formdata.append('type', "uploadfile");
+                
                 $.ajax({
                     type: "POST",
                     encType: "multipart/form-data",
@@ -71,19 +84,25 @@
                     contentType: false,
                     data: formdata,
                     success: function(data){
-                        console.log(data);
-                        $("#mytable").html(data);
-                        $("#table_upload").DataTable({
-                            scrollX: true
-                        });
+                        
+                        if(!data){
+                            Swal.fire({
+                                title:"ผิดพลาด",
+                                text:"ไม่สามรถ Upload File ได้",
+                                icon:"error"
+                            })
+                        }else{ 
+                            $("#mytable").html(data);
+                            $("#table_upload").DataTable({
+                                scrollX: true
+                            });
+                        }
+                         
                     },
                     error: function(msg){
                         console.log(msg);
-                        alert("เกิดข้อผิดพลาดในการอัพโหลด!! กรุณาลองใหม่อีกครั้ง");
-                        $('div.d-flex.flex-column.align-items-center.justify-content-center').attr('id', 'loadscreen');
                     }
                 });
-                
             }
             
             $(document).ready(function() {

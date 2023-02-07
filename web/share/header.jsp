@@ -33,7 +33,7 @@
 
 <style>
     body {
-        background: url('img/bg.jpg') no-repeat center center fixed;
+        background: url('https://img.freepik.com/free-vector/green-curve-abstract-background_53876-99569.jpg') no-repeat center center fixed;
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;

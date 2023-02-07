@@ -15,7 +15,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-
 /**
  *
  * @author pakutsing
@@ -29,7 +28,7 @@ public class UploadFileService {
         HashMap<String, String> result = new HashMap<String, String>();
         String path = "";
         if (ServletFileUpload.isMultipartContent(request)) {
-  
+
             try {
                 //Create a factory for disk-based file and Create a new file upload handler 
                 List multipart = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -38,7 +37,7 @@ public class UploadFileService {
 
                 //Loop check content FormData;
                 while (iterator.hasNext()) {
-                  
+
                     FileItem item = (FileItem) iterator.next();
 
                     //Item for Upload
@@ -53,10 +52,10 @@ public class UploadFileService {
                     //other 
                     if (item.isFormField()) {
                         //Get value from input companyname;
-                        if (item.getFieldName().equals("topiccustomer")) {
-                            result.put("topicname", item.getString("UTF-8"));
-                        } else if (item.getFieldName().equals("topicdepartment")) {
-                            result.put("topicname", item.getString("UTF-8"));
+                        if (item.getFieldName().equals("doc_name")) {
+                            result.put("docname", item.getString("UTF-8"));
+                        } else if (item.getFieldName().equals("type")) {
+                            result.put("type", item.getString("UTF-8"));
                         }
                     }
                 }
@@ -103,5 +102,4 @@ public class UploadFileService {
 
         return currentMili;
     }
-    
 }

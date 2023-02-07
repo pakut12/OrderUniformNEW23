@@ -30,6 +30,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <div class="text-success">
+                            <h5 class="card-title fw-bold">คู่มือ</h5>
+                            <p class="card-text">
+                            <ol>
+                                <li>กดปุ่ม Excel</li>
+                                <li>เปิดไฟล์ Excel ที่โหลดขึ้นมา</li>
+                                <li>กรอก material_group เเละ material_name ให้เรียบร้อย</li>
+                                <li>หลังจากนั้นกดปุ่ม Save ไฟล์ Excel</li>
+                            </ol>
+                        </div>
+                        <hr class="text-success">
                         <div class="text-end">
                             <button class="btn btn-md btn-primary" id="printbarcode" onclick="printbarcode()">PrintBarcode</button>
                         </div>
@@ -44,12 +55,22 @@
                 </div>
             </div>
         </div>
-        <div class="container ">
+        <div class="container">
             <div class="card text-start mt-5">
                 <div class="card-header">
                     DownloadMasterProductGroup
                 </div>
                 <div class="card-body">
+                    <div class="text-success">
+                        <h5 class="card-title fw-bold">คู่มือ</h5>
+                        <p class="card-text">
+                        <ol>
+                            <li>ใส่ ProductGroup ที่ช่อง ProductGroup : เเละกดปุ่ม Add </li>
+                            <li>ตรวจสอบจำนวน ProductGroup ที่เพิ่มให้ครบ</li>
+                            <li>กดปุ่ม Download</li>
+                        </ol>
+                    </div>
+                    <hr class="text-success">
                     <div class="d-flex justify-content-center">
                         <div id="myform">
                             <div class="row g-3 align-items-center ">

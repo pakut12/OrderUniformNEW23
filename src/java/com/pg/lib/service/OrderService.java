@@ -11,7 +11,11 @@ import java.sql.ResultSet;
 
 import com.pg.lib.utility.ConnectDB;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import javax.naming.NamingException;
 
 /**
@@ -23,6 +27,41 @@ public class OrderService {
     private static Connection conn;
     private static PreparedStatement ps;
     private static ResultSet rs;
+
+    private String getDate() {
+        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        Date date = new Date();
+        String todey = dt.format(date);
+        return todey;
+    }
+
+    public Boolean addorderdoc(String docname) throws ClassNotFoundException, SQLException, NamingException {
+        Boolean status = null;
+        int primarykey = getdocid() + 1;
+        String sql = "INSERT INTO ou_transaction (doc_id, doc_name, date_create) VALUES (?, ?, ?)";
+        try {
+            conn = ConnectDB.getConnectionMysql();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, primarykey);
+            ps.setString(2, docname);
+            ps.setString(3, getDate());
+
+            if (ps.executeUpdate() > 0) {
+                status = true;
+            } else {
+                status = false;
+            }
+
+        } catch (Exception e) {
+            status = false;
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+        }
+
+        return status;
+    }
 
     public Boolean addorderlist(List<OUUploadOrder> listorder) throws ClassNotFoundException, SQLException, NamingException {
         Boolean status = null;
@@ -37,6 +76,7 @@ public class OrderService {
             }
 
         } catch (Exception e) {
+            status = false;
             e.printStackTrace();
         } finally {
             ConnectDB.closeConnection(conn);
@@ -47,8 +87,8 @@ public class OrderService {
 
     public String createSqlText(List<OUUploadOrder> listorder) throws ClassNotFoundException, SQLException, NamingException {
         String sql = "INSERT INTO ou_orderupload(order_id, doc_id, receipt_id, order_cms_id, order_cms_fullname, order_cms_company, order_cms_department, order_product_id, order_product_barcode, order_product_name, order_mat_group, order_mat_name, order_product_qty, order_price_exc_vat, order_price_inc_vat) VALUES ";
-        int docid = getdocid() + 1;
         int primarykey = getlastprimarykey() + 1;
+        int docid = getdocid();
         /*
         for (OUUploadOrder orderdetail : listorder) {
         System.out.println(orderdetail.getReceipt_id());
@@ -67,6 +107,7 @@ public class OrderService {
         System.out.println("------------------------------------------------------------------------------------------------------");
         }
          */
+
         for (int n = 0; n < listorder.size(); n++) {
             if (n != listorder.size() - 1) {
                 sql += "('" + primarykey + "',";
@@ -85,8 +126,8 @@ public class OrderService {
                 sql += "'" + listorder.get(n).getOrder_price_inc_vat() + "',";
                 sql += "'" + listorder.get(n).getOrder_price_exc_vat() + "'),";
             } else {
-                sql += "('" + n + "',";
-                sql += "'" + n + "',";
+                sql += "('" + primarykey + "',";
+                sql += "'" + docid + "',";
                 sql += "'" + listorder.get(n).getReceipt_id() + "',";
                 sql += "'" + listorder.get(n).getOrder_cms_id() + "',";
                 sql += "'" + listorder.get(n).getOrder_cms_fullname() + "',";
@@ -103,7 +144,6 @@ public class OrderService {
             }
             primarykey++;
         }
-
         return sql;
     }
 
@@ -117,7 +157,6 @@ public class OrderService {
             while (rs.next()) {
                 primarykey = rs.getInt("lastprimarykey");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -131,7 +170,7 @@ public class OrderService {
 
     private int getdocid() throws ClassNotFoundException, SQLException, NamingException {
         int docid = 0;
-        String sql = "SELECT MAX(doc_id) as lastdocid FROM ou_doc";
+        String sql = "SELECT MAX(doc_id) as lastdocid FROM ou_transaction";
         try {
             conn = ConnectDB.getConnectionMysql();
             ps = conn.prepareStatement(sql);
