@@ -28,11 +28,6 @@
         </style>
     </head>
     <body>
-        
-        
-        
-        
-        
         <%
             String[] productgroup = (String[]) request.getAttribute("productgroup");
             String datenow = (String) request.getAttribute("datenow");

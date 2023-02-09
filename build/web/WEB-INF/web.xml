@@ -16,6 +16,10 @@
         <servlet-name>DownloadMasterPos</servlet-name>
         <servlet-class>com.pg.lib.Servlet.DownloadMasterPos</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Order</servlet-name>
+        <servlet-class>com.pg.lib.Servlet.Order</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Chklogin</servlet-name>
         <url-pattern>/Chklogin</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>DownloadMasterPos</servlet-name>
         <url-pattern>/DownloadMasterPos</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Order</servlet-name>
+        <url-pattern>/Order</url-pattern>
     </servlet-mapping>
     <session-config>
     <session-timeout>

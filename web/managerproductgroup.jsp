@@ -83,7 +83,6 @@
                                 <div class="col-auto">
                                     <button class="btn btn-sm btn-success" type="button" onclick="AddProductGroup()">Add</button>
                                 </div>
-                                
                                 <div class="col-auto">
                                     <button class="btn btn-sm btn-primary" type="button" id="bt_submit" onclick="senddata()"  disabled>Download</button>
                                 </div>

@@ -25,6 +25,15 @@ public class OUUploadOrder {
     private String order_product_qty;
     private String order_price_exc_vat;
     private String order_price_inc_vat;
+    private String order_sum;
+
+    public String getOrder_sum() {
+        return order_sum;
+    }
+
+    public void setOrder_sum(String order_sum) {
+        this.order_sum = order_sum;
+    }
 
     public String getDoc_id() {
         return doc_id;

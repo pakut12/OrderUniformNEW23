@@ -10,7 +10,7 @@
 
 
 
-<html>
+<html >
     <head>
         <%@ include file="share/header.jsp" %>
     </head>
@@ -22,7 +22,7 @@
             }
         %>
         <%@ include file="share/navbar.jsp" %>
-        <div class="container">
+        <div class="container" >
             <div class="card mt-5  ">
                 <div class="card-header ">
                     คู่มือการใช้งาน
