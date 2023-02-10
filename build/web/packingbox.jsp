@@ -25,10 +25,9 @@
         <div class="container" >
             <div class="card mt-5  ">
                 <div class="card-header ">
-                    Packing
+                    PackingBox
                 </div>
                 <div class="card-body" style="color: green;">
-                    
                     <div class="row justify-content-center">
                         <div class="col-sm-12 col-md-auto">
                             <div class="input-group input-group-sm mb-3">
@@ -37,12 +36,32 @@
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-auto">
-                            
-                            <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker" >PrintSticker</button> 
-                            
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" >ชื่อเอกสาร</span>
+                                <input type="text" class="form-control text-center" id="doc_name" value="" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-auto">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" >เเผนก</span>
+                                <select class="form-select" id="inputGroupSelect01">
+                                    <option selected>Choose...</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-auto">
+                            <div class="input-group input-group-sm mb-3">
+                                <span class="input-group-text" >จำนวนคน (กล่อง)</span>
+                                <input type="number" class="form-control" id="customer_num">
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-sm-12 col-md-auto">
+                            <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker">PrintSticker</button> 
                         </div>
                     </div>
-                    
                     <div id="list_table">
                     </div>
                 </div>
@@ -54,11 +73,31 @@
         </footer>
         <script>
             
+            function getDepartmaet(doc_id){
+                $.ajax({
+                    method: "POST",
+                    url: "Order",
+                    data: {
+                        type: "getdepartment",
+                        doc_id:doc_id
+                    },
+                    success:function(msg){
+                        var decode = JSON.parse(msg);
+                        $("#doc_name").val(decode.doc_name);
+                        $("#inputGroupSelect01").append(decode.html);
+        
+        
+                    }
+                }) 
+            }
+            
             function getorderbycustomerid(){
+               
                 var barcode = $("#Barcode").val().split("/");
                 var doc_id = barcode[0];
                 var customer_id = barcode[1];
                 
+                getDepartmaet(doc_id);
                 $.ajax({
                     type:"post",
                     url:"Order",
@@ -113,8 +152,9 @@
                     var barcode = $("#Barcode").val().split("/");
                     var doc_id = barcode[0];
                     var customer_id = barcode[1];
+                    var customer_num = $("#customer_num").val();
                     
-                    window.open("Order?type=printsticker&doc_id="+doc_id+"&customer_id="+customer_id, '_blank','height=400,width=800,left=200,top=200');
+                    window.open("Order?type=printstickerbox&doc_id="+doc_id+"&customer_id="+customer_id+"&customer_num="+customer_num, '_blank','height=400,width=800,left=200,top=200');
                     
                 });
 
@@ -125,7 +165,7 @@
                     getorderbycustomerid();
                    
                 });
-                $("#packing").addClass("active");
+                $("#packingbox").addClass("active");
             });
         </script>
     </body>

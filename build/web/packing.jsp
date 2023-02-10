@@ -37,8 +37,9 @@
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-auto">
-                            <button class="btn btn-sm btn-success" type="button" id="bt_getorder" onclick="getorderbycustomerid()">OK</button> 
-                            <button class="btn btn-sm btn-primary" type="button" id="bt_printorder" >PrintOrder</button> 
+                            
+                            <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker" >PrintSticker</button> 
+                            
                         </div>
                     </div>
                     
@@ -68,8 +69,6 @@
                     },
                     success:function(msg){
                         $("#list_table").html(msg);
-                      
-                       
                         var groupColumn = 1;
                         var table = $('#table_order').DataTable({
                             scrollY: "50vh",
@@ -108,10 +107,24 @@
                             }
                         });
                     }
-                })             
+                })
+             
+                $("#bt_printsticker").click(function(){
+                    var barcode = $("#Barcode").val().split("/");
+                    var doc_id = barcode[0];
+                    var customer_id = barcode[1];
+                    
+                    window.open("Order?type=printsticker&doc_id="+doc_id+"&customer_id="+customer_id, '_blank','height=400,width=800,left=200,top=200');
+                    
+                });
+
             }
             
             $(document).ready(function() {
+                $("#Barcode").on('input', function() {
+                    getorderbycustomerid();
+                   
+                });
                 $("#packing").addClass("active");
             });
         </script>

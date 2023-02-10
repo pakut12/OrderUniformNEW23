@@ -4,6 +4,7 @@
  */
 package com.pg.lib.service;
 
+import com.pg.lib.model.OUDepartment;
 import com.pg.lib.model.OUDocList;
 import com.pg.lib.model.OUOrderSortBySize;
 import com.pg.lib.model.OUUploadOrder;
@@ -36,6 +37,30 @@ public class OrderService {
         Date date = new Date();
         String todey = dt.format(date);
         return todey;
+    }
+
+    public List<OUDepartment> getDepartment(String doc_id) throws SQLException {
+        List<OUDepartment> listdepartment = new ArrayList();
+        String sql = "SELECT doc_name, order_cms_department FROM ou_orderupload a INNER JOIN ou_transaction b ON b.doc_id = a.doc_id WHERE b.doc_id = ? GROUP BY order_cms_department";
+        try {
+            conn = ConnectDB.getConnectionMysql();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, doc_id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                OUDepartment department = new OUDepartment();
+                department.setDepartment(rs.getString("order_cms_department"));
+                department.setDoc_name(rs.getString("doc_name"));
+                listdepartment.add(department);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+            rs.close();
+        }
+        return listdepartment;
     }
 
     public Boolean addorderdoc(String docname) throws ClassNotFoundException, SQLException, NamingException {
