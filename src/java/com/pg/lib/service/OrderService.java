@@ -39,6 +39,54 @@ public class OrderService {
         return todey;
     }
 
+    public Boolean ConfirmBox(String doc_id) throws SQLException {
+        Boolean status = null;
+        String sql = "UPDATE ou_transaction SET doc_status = ? WHERE doc_id = ?";
+        try {
+            conn = ConnectDB.getConnectionMysql();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "packingboxsucces");
+            ps.setString(2, doc_id);
+            if (ps.executeUpdate() > 0) {
+                status = true;
+            } else {
+                status = false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+
+        }
+        return status;
+    }
+
+    public Boolean ConfirmBag(String doc_id) throws SQLException {
+        Boolean status = null;
+        String sql = "UPDATE ou_transaction SET doc_status = ? WHERE doc_id = ?";
+        try {
+            conn = ConnectDB.getConnectionMysql();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "packingbagsucces");
+            ps.setString(2, doc_id);
+            if (ps.executeUpdate() > 0) {
+                status = true;
+            } else {
+                status = false;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+
+        }
+        return status;
+    }
+
     public List<OUDepartment> getDepartment(String doc_id) throws SQLException {
         List<OUDepartment> listdepartment = new ArrayList();
         String sql = "SELECT doc_name, order_cms_department FROM ou_orderupload a INNER JOIN ou_transaction b ON b.doc_id = a.doc_id WHERE b.doc_id = ? GROUP BY order_cms_department";
@@ -234,6 +282,7 @@ public class OrderService {
                 OUDocList doc = new OUDocList();
                 doc.setDoc_id(rs.getString("doc_id"));
                 doc.setDoc_name(rs.getString("doc_name"));
+                doc.setDoc_status(rs.getString("doc_status"));
                 doc.setDate_create(rs.getString("date_create"));
                 listorder.add(doc);
             }
@@ -286,9 +335,47 @@ public class OrderService {
         return listorder;
     }
 
+    public List<OUUploadOrder> getorderlistbydocidwithdepartment(String id, String department) throws ClassNotFoundException, SQLException, NamingException {
+        List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
+        String sql = "SELECT * FROM ou_orderupload WHERE doc_id = ? AND order_cms_department = ? GROUP BY order_cms_id,order_cms_fullname,order_cms_company,order_cms_department";
+        try {
+            conn = ConnectDB.getConnectionMysql();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            ps.setString(2, department);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                OUUploadOrder order = new OUUploadOrder();
+                order.setOrder_id(rs.getString("order_id"));
+                order.setDoc_id(rs.getString("doc_id"));
+                order.setReceipt_id(rs.getString("receipt_id"));
+                order.setOrder_cms_id(rs.getString("order_cms_id"));
+                order.setOrder_cms_fullname(rs.getString("order_cms_fullname"));
+                order.setOrder_cms_company(rs.getString("order_cms_company"));
+                order.setOrder_cms_department(rs.getString("order_cms_department"));
+                order.setOrder_product_id(rs.getString("order_product_id"));
+                order.setOrder_product_barcode(rs.getString("order_product_barcode"));
+                order.setOrder_product_name(rs.getString("order_product_name"));
+                order.setOrder_mat_group(rs.getString("order_mat_group"));
+                order.setOrder_mat_name(rs.getString("order_mat_name"));
+                order.setOrder_product_qty(rs.getString("order_product_qty"));
+                order.setOrder_price_exc_vat(rs.getString("order_price_exc_vat"));
+                order.setOrder_price_inc_vat(rs.getString("order_price_inc_vat"));
+                listorder.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+            rs.close();
+        }
+        return listorder;
+    }
+
     public List<OUUploadOrder> getorderlistbydocid(String id) throws ClassNotFoundException, SQLException, NamingException {
         List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
-        String sql = "SELECT * FROM ou_orderupload WHERE doc_id = ?";
+        String sql = "SELECT * FROM ou_orderupload WHERE doc_id = ? ORDER BY order_cms_department";
         try {
             conn = ConnectDB.getConnectionMysql();
             ps = conn.prepareStatement(sql);
@@ -325,7 +412,7 @@ public class OrderService {
 
     public List<OUUploadOrder> getorderlistbydocidsortbycustomer(String id) throws ClassNotFoundException, SQLException, NamingException {
         List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
-        String sql = "SELECT order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ou_orderupload WHERE doc_id = ? GROUP BY order_cms_id,order_cms_fullname,order_cms_company,order_cms_department";
+        String sql = "SELECT order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ou_orderupload WHERE doc_id = ? GROUP BY order_cms_id,order_cms_fullname,order_cms_company,order_cms_department ORDER BY order_cms_department";
         try {
             conn = ConnectDB.getConnectionMysql();
             ps = conn.prepareStatement(sql);

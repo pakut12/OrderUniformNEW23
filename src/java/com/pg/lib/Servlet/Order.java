@@ -44,6 +44,9 @@ public class Order extends HttpServlet {
                     OrderService order = new OrderService();
                     List<OUDocList> listdoc = order.getDocList();
 
+                    String status = "";
+                    String outputstatus = "";
+
                     //สร้างตาราง doc_list
                     String html = "";
                     html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_listdoc'>";
@@ -52,16 +55,29 @@ public class Order extends HttpServlet {
                     html += "<th>ลำดับ</th>";
                     html += "<th>เลขที่เอกสาร</th>";
                     html += "<th>ชื่อเอกสาร</th>";
+                    html += "<th>สถานะ</th>";
                     html += "<th>วันที่สร้าง</th>";
                     html += "</tr>";
                     html += "</thead>";
                     html += "<tbody>";
                     int n = 1;
                     for (OUDocList orderdetail : listdoc) {
+                        if (orderdetail.getDoc_status().equalsIgnoreCase("new")) {
+                            status = "<div class='text-success fw-bold'>สร้างเอกสารเรียบร้อย</div>";
+                            outputstatus = "สร้างเอกสารเรียบร้อย";
+                        } else if (orderdetail.getDoc_status().equalsIgnoreCase("packingbagsucces")) {
+                            status = "<div class='text-success fw-bold'>จัดสินค้าใส่ถุงเรียบร้อย</div>";
+                            outputstatus = "จัดสินค้าใส่ถุงเรียบร้อย";
+                        } else if (orderdetail.getDoc_status().equalsIgnoreCase("packingboxsucces")) {
+                            status = "<div class='text-success fw-bold'>จัดสินค้าใส่กล่องเรียบร้อย</div>";
+                            outputstatus = "จัดสินค้าใส่กล่องเรียบร้อย";
+                        }
+
                         html += "<tr>";
                         html += "<td>" + n + "</td>";
-                        html += "<td><a href='Order?id=" + orderdetail.getDoc_id() + "&name=" + orderdetail.getDoc_name() + "&type=transactionorder'>" + orderdetail.getDoc_id() + "</a></td>";
+                        html += "<td><a href='Order?id=" + orderdetail.getDoc_id() + "&name=" + orderdetail.getDoc_name() + "&type=transactionorder&status=" + orderdetail.getDoc_status() + "'>" + orderdetail.getDoc_id() + "</a></td>";
                         html += "<td>" + orderdetail.getDoc_name() + "</td>";
+                        html += "<td >" + status + "</td>";
                         html += "<td>" + orderdetail.getDate_create() + "</td>";
                         html += "</tr>";
                         n++;
@@ -73,8 +89,6 @@ public class Order extends HttpServlet {
                     out.print(html);
                 } else if (type.equals("transactionorder")) {
                     String id = request.getParameter("id").trim();
-
-
 
                     OrderService order = new OrderService();
                     List<OUUploadOrder> listorder = order.getorderlistbydocid(id);
@@ -113,7 +127,7 @@ public class Order extends HttpServlet {
                     String customer_id = request.getParameter("customer_id");
 
                     OrderService order = new OrderService();
-                    List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, customer_id);
+                    List<OUUploadOrder> listorder = order.getorderlistbydocid(doc_id);
 
 
                     String html = "";
@@ -161,7 +175,7 @@ public class Order extends HttpServlet {
 
                     out.print(html);
 
-                } else if (type.equals("printsticker")) {
+                } else if (type.equals("printstickerbag")) {
                     String doc_id = request.getParameter("doc_id").trim();
                     String customer_id = request.getParameter("customer_id").trim();
 
@@ -181,7 +195,7 @@ public class Order extends HttpServlet {
                     request.setAttribute("listordercustomer", listordercustomer);
                     request.setAttribute("listordersize", listordersize);
 
-                    getServletContext().getRequestDispatcher("/printsticker.jsp").forward(request, response);
+                    getServletContext().getRequestDispatcher("/printstickerbag.jsp").forward(request, response);
                 } else if (type.equals("printstickerbox")) {
                     String doc_id = request.getParameter("doc_id").trim();
                     String customer_num = request.getParameter("customer_num").trim();
@@ -190,19 +204,13 @@ public class Order extends HttpServlet {
                     Date date = new Date();
                     String todey = dt.format(date);
 
-                    OrderService order = new OrderService();
-                    List<OUUploadOrder> listorder = order.getorderlistbydocid(doc_id);
-                    List<OUUploadOrder> listordercustomer = order.getorderlistbydocidsortbycustomer(doc_id);
-                    List<OUOrderSortBySize> listordersize = order.getorderlistbydocidsortbysize(doc_id);
-
                     request.setAttribute("date", todey);
                     request.setAttribute("doc_id", doc_id);
                     request.setAttribute("customer_num", customer_num);
-                    request.setAttribute("listorder", listorder);
-                    request.setAttribute("listordercustomer", listordercustomer);
-                    request.setAttribute("listordersize", listordersize);
+
 
                     getServletContext().getRequestDispatcher("/printstickerbox.jsp").forward(request, response);
+
                 } else if (type.equals("getdepartment")) {
                     String doc_id = request.getParameter("doc_id").trim();
 
@@ -216,7 +224,35 @@ public class Order extends HttpServlet {
                     JSONObject obj = new JSONObject();
                     obj.put("html", html);
                     obj.put("doc_name", listtdepartment.get(0).getDoc_name());
-                    
+
+                    out.print(obj);
+                } else if (type.equals("confirmbag")) {
+                    String doc_id = request.getParameter("doc_id");
+
+                    OrderService order = new OrderService();
+                    Boolean statusconfimbag = order.ConfirmBag(doc_id);
+
+                    JSONObject obj = new JSONObject();
+                    if (statusconfimbag) {
+                        obj.put("status", "true");
+                    } else {
+                        obj.put("status", "false");
+                    }
+                    out.print(obj);
+                } else if (type.equals("confirmbox")) {
+                    String doc_id = request.getParameter("doc_id");
+
+                    OrderService order = new OrderService();
+                    Boolean statusconfimbag = order.ConfirmBox(doc_id);
+
+                    JSONObject obj = new JSONObject();
+                    if (statusconfimbag) {
+                        obj.put("status", "true");
+                    } else {
+                        obj.put("status", "false");
+                    }
+
+
                     out.print(obj);
                 }
             } catch (Exception e) {

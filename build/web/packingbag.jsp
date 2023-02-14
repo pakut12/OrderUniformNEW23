@@ -22,19 +22,38 @@
             }
         %>
         <%@ include file="share/navbar.jsp" %>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="myform">
             <div class="container" >
-                <div class="card mt-5  col-sm-12 col-md-6 mx-auto ">
+                <div class="card mt-5  ">
                     <div class="card-header ">
-                        PackingBox
+                        PackingBag
                     </div>
                     <div class="card-body" style="color: green;">
+                        
                         <div class="row justify-content-center">
-                            <div class="col-sm-12 col-md-12">
+                            <div class="col-sm-12 col-md-auto">
                                 <div class="input-group input-group-sm mb-3">
-                                    <span class="input-group-text " >DocID</span>
+                                    <span class="input-group-text" >DocID</span>
                                     <%
-            String doc_id = request.getParameter("doc_id");
+            String doc_id = (String) request.getParameter("doc_id");
             if (doc_id == null) {
                 doc_id = "";
             }
@@ -42,96 +61,103 @@
                                     <input type="text" class="form-control text-center" id="Barcode" value="<%=doc_id%>" required>
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-md-12">
-                                <div class="input-group input-group-sm mb-3">
-                                    <span class="input-group-text" >ชื่อเอกสาร</span>
-                                    <input type="text" class="form-control text-center" id="doc_name" value="" disabled required>
-                                </div>
-                            </div>
                             
-                            <div class="col-sm-12 col-md-12">
-                                <div class="input-group input-group-sm mb-3">
-                                    <span class="input-group-text" >จำนวนคน (กล่อง)</span>
-                                    <input type="number" class="form-control text-center" id="customer_num" value="1" required>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-12">
-                                <button class="btn btn-sm btn-primary w-100" type="button" id="bt_printsticker">PrintSticker</button> 
-                                <button class="btn btn-sm btn-success w-100 mt-2" type="button" id="bt_confirm">Confirm</button> 
+                            <div class="col-sm-12 col-md-auto">
+                                <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker" >PrintSticker</button> 
+                                <button class="btn btn-sm btn-success" type="button" id="bt_confirm" >Confirm</button> 
                             </div>
                         </div>
-                        
+                        <div id="list_table">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <footer>
             <%@ include file="share/footer.jsp" %>
         </footer>
         <script>
-            function getDepartmaet(doc_id){
+            
+            function getorderbycustomerid(){
                 var barcode = $("#Barcode").val().split("/");
                 var doc_id = barcode[0];
                 var customer_id = barcode[1];
-                var customer_num = $("#customer_num").val();
-                
+              
                 if(doc_id){
                     $.ajax({
-                        method: "POST",
-                        url: "Order",
-                        data: {
-                            type: "getdepartment",
+                        type:"post",
+                        url:"Order",
+                        data:{
+                            type:"getorderbycustomerid",
+                            customer_id:customer_id,
                             doc_id:doc_id
                         },
                         success:function(msg){
-                            var decode = JSON.parse(msg);
-                            console.log(decode);
-                            $("#doc_name").val(decode.doc_name);
-                       
+                            $("#list_table").html(msg);
+                            var groupColumn = 1;
+                            var table = $('#table_order').DataTable({
+                                scrollY: "50vh",
+                                scrollCollapse: true,
+                                columnDefs: [{ visible: false, targets: groupColumn }],
+                                order: [[groupColumn, 'asc']],
+                                displayLength: 25,
+                                drawCallback: function (settings) {
+                                    var api = this.api();
+                                    var rows = api.rows({ page: 'current' }).nodes();
+                                    var last = null;
+                                    api
+                                    .column(groupColumn, { page: 'current' })
+                                    .data()
+                                    .each(function (group, i) {
+                                        if (last !== group) {
+                                            $(rows)
+                                            .eq(i)
+                                            .before('<tr class="group"><td colspan="13" class="text-start p-2" style="background-color:#ddd">' + group + '</td></tr>');
+                                            last = group;
+                                        }
+                                    });
+                                }
+                            });
+ 
+                            // Order by the grouping
+                            $('#table_order tbody').on('click', 'tr.group', function () {
+                                var currentOrder = table.order()[0];
+                                if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
+                                    table.order([groupColumn, 'desc']).draw();
+                                } else {
+                                    table.order([groupColumn, 'asc']).draw();
+                                }
+                            });
                         }
-                    }) 
+                    })  
                 }
-               
-            }
-            
-            function getdata(){
-                var barcode = $("#Barcode").val().split("/");
-                var doc_id = barcode[0];
-                var customer_id = barcode[1];
-                var customer_num = $("#customer_num").val();
                 
-                getDepartmaet(doc_id);
-        
+                
+                
             }
-            
             
             $(document).ready(function() {
-                getdata();
-                $("#Barcode").on('input', function() {
-                    getdata();
-                });
+                getorderbycustomerid();
                 $("#manageorder").addClass("active");
+                $("#Barcode").on('input', function() {
+                    getorderbycustomerid();
+                });
                 
                 $("#bt_printsticker").click(function(){
                     var barcode = $("#Barcode").val().split("/");
                     var doc_id = barcode[0];
                     var customer_id = barcode[1];
-                    var customer_num = $("#customer_num").val();
-                    var doc_name = $("#doc_name").val();
-                    var department= $("#department").val();
-                    
                     $("#myform").addClass("was-validated");
-                    if(doc_id && customer_num){
-                        var url = "Order?type=printstickerbox&doc_id="+doc_id+"&customer_id="+customer_id+"&customer_num="+customer_num+"&doc_name="+doc_name+"&department="+department; 
-                        window.open(url, '_blank','height=400,width=800,left=200,top=200');
-                    }else{
+                    if(!doc_id){
                         Swal.fire({
                             title:"ผิดพลาด",
-                            icon:"error",
-                            text:"กรุณากรอกข้อมูลให้ถูกต้อง"
+                            text:"กรุณากรอกข้อมูลให้ถูกต้อง",
+                            icon:"error"
                         })
+                    }else{
+                        window.open("Order?type=printstickerbag&doc_id="+doc_id+"&customer_id="+customer_id, '_blank','height=400,width=800,left=200,top=200');
                     }
-                    
                 });
                 
                 $("#bt_confirm").click(function(){
@@ -139,7 +165,7 @@
                     var doc_id = barcode[0];
                     var customer_id = barcode[1];
                     $("#myform").addClass("was-validated");
-                    if(doc_id && customer_num){
+                    if(doc_id){
                         Swal.fire({
                             title: 'ยืนยัน',
                             text: "คุณต้องการยืนยันใช่หรือไม่",
@@ -155,7 +181,7 @@
                                     type:"post",
                                     url:"Order",
                                     data:{
-                                        type:"confirmbox",
+                                        type:"confirmbag",
                                         doc_id:doc_id
                                     },
                                     success:function(msg){
@@ -188,7 +214,8 @@
                         })
                     }
                     
-                });
+                })
+               
             });
         </script>
     </body>

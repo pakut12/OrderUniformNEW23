@@ -16,10 +16,22 @@
     </head>
     <body>
         <%
+
             String status = (String) request.getSession().getAttribute("statuslogin");
             if (status == null || status.equals("0")) {
                 getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
             }
+
+            String productstatus = "";
+
+            if (request.getParameter("status").equalsIgnoreCase("new")) {
+                productstatus = "สร้างเอกสารเรียบร้อย";
+            } else if (request.getParameter("status").equalsIgnoreCase("packingbagsucces")) {
+                productstatus = "จัดสินค้าใส่ถุงเรียบร้อย";
+            } else if (request.getParameter("status").equalsIgnoreCase("packingboxsucces")) {
+                productstatus = "จัดสินค้าใส่กล่องเรียบร้อย";
+            }
+
         %>
         <%@ include file="share/navbar.jsp" %>
         <div class="container">
@@ -29,25 +41,25 @@
                 </div>
                 <div class="card-body" style="color: green;">
                     <div class="card mt-3">
-                        <div class="card-body h3">
-                            <div class="row">
-                                <div class="d-flex justify-content-evenly">
-                                    <div class="">เลขที่เอกสาร :</div>
-                                    <div class=""><%=request.getParameter("id")%></div>
-                                </div>
-                            </div>
-                            <div class="row mt-1">
-                                <div class="d-flex justify-content-evenly">
-                                    <div class="">ชื่อเอกสาร : </div>
-                                    <div class=""><%=request.getParameter("name")%></div>
+                        <div class="card-body h4 ">
+                            <div class="row  ">
+                                <div class="col-sm-12 col-md-12 ">
+                                    <div class="row mx-2 justify-content-center">
+                                        เลขที่เอกสาร : <%=request.getParameter("id")%>
+                                    </div>
+                                    <div class="row mt-3 mx-2 justify-content-center">
+                                        ชื่อเอกสาร : <%=request.getParameter("name")%>
+                                    </div>
+                                    <div class="row mt-3 mx-2 justify-content-center">
+                                        สถานะ : <%=productstatus%>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-end">
-                        <a href="Order?type=printorder&id=<%=request.getParameter("id")%>&name=<%=request.getParameter("name")%>">
-                            <button class="btn btn-success mt-4" type="button">PrintBarcode</button>
-                        </a>
+                        <button class="btn btn-success mt-4" type="button" onclick="packingbag()">PackingBag</button>
+                        <button class="btn btn-primary mt-4" type="button" onclick="packingbox()">PackingBox</button>
                     </div>
                     <nav class="">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -66,16 +78,16 @@
             html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_order'>";
             html += "<thead>";
             html += "<tr>";
-            html += "<th>ลำดับ</th>";
-            html += "<th>เลขที่คำสั้งซื้อ</th>";
-            html += "<th>รหัสสินค้า</th>";
-            html += "<th>รหัสบาร์โค้ต</th>";
-            html += "<th>ชื่อสินค้า</th>";
-            html += "<th>Mat_Group</th>";
-            html += "<th>Mat_Name</th>";
-            html += "<th>จำนวนที่ขาย</th>";
-            html += "<th>ราคาต้นทุน</th>";
-            html += "<th>ราคาขาย</th>";
+            html += "<th class='text-center'>ลำดับ</th>";
+            html += "<th class='text-center'>เลขที่คำสั้งซื้อ</th>";
+            html += "<th class='text-center'>รหัสสินค้า</th>";
+            html += "<th class='text-center'>รหัสบาร์โค้ต</th>";
+            html += "<th class='text-center'>ชื่อสินค้า</th>";
+            html += "<th class='text-center'>Mat_Group</th>";
+            html += "<th class='text-center'>Mat_Name</th>";
+            html += "<th class='text-center'>จำนวนที่ขาย</th>";
+            html += "<th class='text-center'>ราคาต้นทุน</th>";
+            html += "<th class='text-center'>ราคาขาย</th>";
             html += "</tr>";
             html += "</thead>";
             html += "<tbody>";
@@ -84,7 +96,6 @@
                 html += "<tr>";
                 html += "<td>" + n + "</td>";
                 html += "<td><b>เลขที่คำสั้งซื้อ : </b>" + orderdetail.getReceipt_id() + "<br><b>รหัสพนักงาน : </b>" + orderdetail.getOrder_cms_id() + "<br><b>ชื่อนามสกุล : </b>" + orderdetail.getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + orderdetail.getOrder_cms_company() + "<br><b>เเผนก : </b>" + orderdetail.getOrder_cms_department() + "</td>";
-
                 html += "<td>" + orderdetail.getOrder_product_id() + "</td>";
                 html += "<td>" + orderdetail.getOrder_product_barcode() + "</td>";
                 html += "<td>" + orderdetail.getOrder_product_name() + "</td>";
@@ -112,12 +123,12 @@
             html1 += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_ordersortbycustomer'>";
             html1 += "<thead>";
             html1 += "<tr>";
-            html1 += "<th>ลำดับ</th>";
-            html1 += "<th>รหัสพนักงาน</th>";
-            html1 += "<th>ชื่อพนักงาน</th>";
-            html1 += "<th>บริษัท</th>";
-            html1 += "<th>เเผนก</th>";
-            html1 += "<th>จำนวนที่ขาย</th>";
+            html1 += "<th class='text-center'>ลำดับ</th>";
+            html1 += "<th class='text-center'>รหัสพนักงาน</th>";
+            html1 += "<th class='text-center'>ชื่อพนักงาน</th>";
+            html1 += "<th class='text-center'>บริษัท</th>";
+            html1 += "<th class='text-center'>เเผนก</th>";
+            html1 += "<th class='text-center'>จำนวนที่ขาย</th>";
             html1 += "</tr>";
             html1 += "</thead>";
             html1 += "<tbody>";
@@ -147,14 +158,14 @@
             html2 += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_ordersortbysize'>";
             html2 += "<thead>";
             html2 += "<tr>";
-            html2 += "<th>ลำดับ</th>";
-            html2 += "<th>รหัสบาร์โค้ด</th>";
-            html2 += "<th>รหัสบาร์โค้ด</th>";
-            html2 += "<th>ชื่นสินค้า</th>";
-            html2 += "<th>ไซร์</th>";
-            html2 += "<th>mat_group</th>";
-            html2 += "<th>mat_name</th>";
-            html2 += "<th>จำนวนที่ขาย</th>";
+            html2 += "<th class='text-center'>ลำดับ</th>";
+            html2 += "<th class='text-center'>รหัสบาร์โค้ด</th>";
+            html2 += "<th class='text-center'>รหัสบาร์โค้ด</th>";
+            html2 += "<th class='text-center'>ชื่นสินค้า</th>";
+            html2 += "<th class='text-center'>ไซร์</th>";
+            html2 += "<th class='text-center'>mat_group</th>";
+            html2 += "<th class='text-center'>mat_name</th>";
+            html2 += "<th class='text-center'>จำนวนที่ขาย</th>";
             html2 += "</tr>";
             html2 += "</thead>";
             html2 += "<tbody>";
@@ -163,13 +174,14 @@
             for (OUOrderSortBySize orderdetail : listordersize) {
                 String color = orderdetail.getOrder_prduct_id().substring(10, 12);
                 String size = orderdetail.getOrder_prduct_id().substring(12, 18);
-                
+
                 html2 += "<tr>";
                 html2 += "<td>" + n3 + "</td>";
                 html2 += "<td><b>รหัสสินค้า : </b>" + orderdetail.getOrder_productgroup().substring(0, 10) + "<br><b>สี : </b>" + color + "</td>";
                 html2 += "<td>" + orderdetail.getOrder_prduct_barcode() + "</td>";
-                html2 += "<td>" + size + "</td>";
                 html2 += "<td>" + orderdetail.getOrder_prduct_name() + "</td>";
+                html2 += "<td>" + size + "</td>";
+
                 html2 += "<td>" + orderdetail.getOrder_mat_group() + "</td>";
                 html2 += "<td>" + orderdetail.getOrder_mat_name() + "</td>";
                 html2 += "<td>" + Math.round(Double.parseDouble(orderdetail.getOrder_total())) + "</td>";
@@ -193,6 +205,16 @@
             <%@ include file="share/footer.jsp" %>
         </footer>
         <script>
+            function packingbag(){
+                var url  = 'packingbag.jsp?doc_id=<%=request.getParameter("id")%>';
+                window.location.href = url ;
+            }
+          
+            function packingbox(){
+                var url  = 'packingbox.jsp?doc_id=<%=request.getParameter("id")%>';
+                window.location.href = url ;
+            }
+            
             function setTabalTransactionbydetail(){     
                 var groupColumn = 1;
                 var table = $('#table_order').DataTable({

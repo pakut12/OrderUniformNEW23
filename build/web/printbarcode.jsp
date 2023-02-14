@@ -54,9 +54,10 @@
             },
             header: function(currentPage, pageCount, pageSize) {           
                 return [
-                    
+                   
                     {
                         columns: [
+                            
                             {
                                 // star-sized columns fill the remaining space
                                 // if there's more than one star-column, available width is divided equally
@@ -110,13 +111,16 @@
                                                 // headers are automatically repeated if the table spans over multiple pages
                                                 // you can declare how many rows should be treated as headers
                                                 headerRows: 1,
-                                                widths: [ '*', '*', '*', 'auto' ],
+                                                widths: [ 'auto', '*', '*', 'auto' ],
                                                 body: [
-                                                    [{text:"ชื่อพนักงาน",bold: true,alignment: 'center'},{text:"บริษัท",bold: true,alignment: 'center'},{text:"เเผนก",bold: true,alignment: 'center'} ,{text:"Barcode",bold: true,alignment: 'center'}],
+                                                    [{text:"ลำดับ",bold: true,alignment: 'center'},{text:"ชื่อพนักงาน",bold: true,alignment: 'center'},{text:"บริษัท",bold: true,alignment: 'center'},{text:"เเผนก",bold: true,alignment: 'center'} ],
                             <%
             List<OUUploadOrder> listorder = (List<OUUploadOrder>) request.getAttribute("listordercustomer");
+            int n = 1;
             for (OUUploadOrder orderdetail : listorder) {
-                out.print("['" + orderdetail.getOrder_cms_fullname() + "','" + orderdetail.getOrder_cms_company() + "','" + orderdetail.getOrder_cms_department() + "',{image: textToBase64Barcode('" + request.getAttribute("doc_id").toString() + "/" + orderdetail.getOrder_cms_id() + "'),width: 150, height: 40}],");
+                out.print("['" + String.valueOf(n) + "','" + orderdetail.getOrder_cms_fullname() + "','" + orderdetail.getOrder_cms_company() + "','" + orderdetail.getOrder_cms_department() + "'],");
+                n++;
+                
             }
         %> 
                                                     ]
