@@ -13,6 +13,12 @@
         <%@ include file="share/header.jsp" %>
     </head>
     <body>
+        <%
+            String error = request.getParameter("error");
+            if (error != null) {
+                out.print("<script>Swal.fire({title:'ผิดพลาด',icon:'error',text:'กรุณาใส่ Username เเละ Password ให้ถูกต้อง'}) </script>");
+            }
+        %>
         <img src="img/logo.png" class="img-fluid">
         <div class="container">
             <form action="Chklogin" method="POST"> 
@@ -35,7 +41,7 @@
             <%@ include file="share/footer.jsp" %>
         </footer>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 //alert('asd');
             });
         </script>

@@ -37,12 +37,17 @@
         
     </head>
     <style>
-        table {
-            font-size: 2pt;
-        }
-        body
-        {
-            margin: 0mm 0mm 0mm 0mm;
+        @media print {
+            html, body {
+                width: 5in;
+                height: 2in;
+                font-size: 0.9em;
+            }
+            
+            table {
+                border-spacing: 0;
+                border-collapse: collapse;
+            }
         }
         .page-break
         {  

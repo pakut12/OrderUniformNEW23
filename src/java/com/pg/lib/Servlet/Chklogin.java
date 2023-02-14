@@ -35,8 +35,7 @@ public class Chklogin extends HttpServlet {
             String username = request.getParameter("username").trim();
             String password = request.getParameter("password").trim();
             HttpSession session = request.getSession();
-
-
+            
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
             md.update(password.getBytes());
@@ -48,7 +47,7 @@ public class Chklogin extends HttpServlet {
                 url = "/home.jsp";
             } else {
                 session.setAttribute("statuslogin", "0");
-                url = "/index.jsp";
+                url = "/index.jsp?error=0";
             }
             getServletContext().getRequestDispatcher(url).forward(request, response);
 

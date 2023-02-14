@@ -54,7 +54,6 @@ public class UploadFile extends HttpServlet {
                     OrderService ordersv = new OrderService();
                     Boolean statusuploadfile = ordersv.addorderlist(listorder);
                     
-                    
                     String html = "";
                     if (statusuploadfile) {
                         Boolean docid = ordersv.addorderdoc(list.get("docname"));
