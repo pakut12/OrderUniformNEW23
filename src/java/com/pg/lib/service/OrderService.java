@@ -272,6 +272,33 @@ public class OrderService {
         return docid;
     }
 
+    public List<OUDocList> getDocByid(String doc_id) throws SQLException {
+        List<OUDocList> listorder = new ArrayList();
+        String sql = "SELECT * FROM ounew_transaction WHERE doc_id = ? ORDER BY doc_id DESC";
+        try {
+            conn = ConnectDB.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, doc_id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                OUDocList doc = new OUDocList();
+                doc.setDoc_id(rs.getString("doc_id"));
+                doc.setDoc_name(rs.getString("doc_name"));
+                doc.setDoc_status(rs.getString("doc_status"));
+                doc.setDate_create(rs.getString("date_create"));
+                listorder.add(doc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+            rs.close();
+        }
+
+        return listorder;
+    }
+
     public List<OUDocList> getDocList() throws SQLException {
         List<OUDocList> listorder = new ArrayList();
         String sql = "SELECT * FROM ounew_transaction WHERE doc_id != 99 ORDER BY doc_id DESC";

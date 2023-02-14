@@ -75,7 +75,7 @@ public class Order extends HttpServlet {
 
                         html += "<tr>";
                         html += "<td>" + n + "</td>";
-                        html += "<td><a href='Order?id=" + orderdetail.getDoc_id() + "&name=" + orderdetail.getDoc_name() + "&type=transactionorder&status=" + orderdetail.getDoc_status() + "'>" + orderdetail.getDoc_id() + "</a></td>";
+                        html += "<td><a href='Order?id=" + orderdetail.getDoc_id() + "&type=transactionorder'>" + orderdetail.getDoc_id() + "</a></td>";
                         html += "<td>" + orderdetail.getDoc_name() + "</td>";
                         html += "<td >" + status + "</td>";
                         html += "<td>" + orderdetail.getDate_create() + "</td>";
@@ -94,12 +94,29 @@ public class Order extends HttpServlet {
                     List<OUUploadOrder> listorder = order.getorderlistbydocid(id);
                     List<OUUploadOrder> listordercustomer = order.getorderlistbydocidsortbycustomer(id);
                     List<OUOrderSortBySize> listordersize = order.getorderlistbydocidsortbysize(id);
+                    List<OUDocList> docdetail = order.getDocByid(id);
+
+                    String outputstatus = "";
+                    if (docdetail.get(0).getDoc_status().equalsIgnoreCase("new")) {
+                        outputstatus = "สร้างเอกสารเรียบร้อย";
+                    } else if (docdetail.get(0).getDoc_status().equalsIgnoreCase("packingbagsucces")) {
+                        outputstatus = "จัดสินค้าใส่ถุงเรียบร้อย";
+                    } else if (docdetail.get(0).getDoc_status().equalsIgnoreCase("packingboxsucces")) {
+                        outputstatus = "จัดสินค้าใส่กล่องเรียบร้อย";
+                    }
+
+                    String doc_id = docdetail.get(0).getDoc_id();
+                    String doc_name = docdetail.get(0).getDoc_name();
+                    String doc_status = docdetail.get(0).getDoc_status();
 
                     request.setAttribute("listorder", listorder);
                     request.setAttribute("listordercustomer", listordercustomer);
                     request.setAttribute("listordersize", listordersize);
-
-
+                    request.setAttribute("doc_id", doc_id);
+                    request.setAttribute("doc_name", doc_name);
+                    request.setAttribute("doc_status", outputstatus);
+              
+                    
                     getServletContext().getRequestDispatcher("/displayorder.jsp").forward(request, response);
                 } else if (type.equals("printorder")) {
                     String id = request.getParameter("id").trim();

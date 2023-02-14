@@ -75,7 +75,7 @@
                     html += "<tr>";
                     html += "<th class='p-0'>ลำดับ</th>";
                     html += "<th class='p-0'>รหัสสินค้า</th>";
-                    html += "<th class='p-0'>รหัสบาร์โค้ต</th>";
+                   // html += "<th class='p-0'>รหัสบาร์โค้ต</th>";
                     html += "<th class='p-0'>ชื่อสินค้า</th>";
                     html += "<th class='p-0'>สี</th>";
                     html += "<th class='p-0'>ไซร์</th>";
@@ -92,7 +92,7 @@
                         html += "<tr>";
                         html += "<td class='p-0'>" + n + "</td>";
                         html += "<td class='p-0'>" + orderdetail.getOrder_product_id() + "</td>";
-                        html += "<td class='p-0'>" + orderdetail.getOrder_product_barcode() + "</td>";
+                      //  html += "<td class='p-0'>" + orderdetail.getOrder_product_barcode() + "</td>";
                         html += "<td class='p-0'>" + orderdetail.getOrder_product_name() + "</td>";
                         html += "<td class='p-0'>" + color + "</td>";
                         html += "<td class='p-0'>" + size + "</td>";
@@ -105,7 +105,7 @@
                     html += "</tbody>";
                     html += "<tfoot>";
                     html += "<tr>";
-                    html += "<td colspan='6' class='p-0 text-center'><b>รวม</b></td>";
+                    html += "<td colspan='5' class='p-0 text-center'><b>รวม</b></td>";
                     html += "<td class='p-0 text-center'>" + sum + "</td>";
                     html += "</tr>";
                     html += "</tfoot>";

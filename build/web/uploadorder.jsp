@@ -39,18 +39,20 @@
                         </div>
                         <hr>
                         <div class="row">
+                            
                             <div class="col-sm-12 col-md-6">
                                 <div class="mb-3">
                                     <label for="formFile" class="form-label">Doc Name : </label>
-                                    <input class="form-control form-control-sm" type="text" id="doc_name" >
+                                    <input class="form-control form-control-sm" type="text" id="doc_name" required>
                                 </div>
                             </div>
                             <div class="col-sm-12 col-md-6">
                                 <div class="mb-3">
                                     <label for="formFile" class="form-label">File : </label>
-                                    <input class="form-control form-control-sm" type="file" id="fileexcel" accept=".xls">
+                                    <input class="form-control form-control-sm" type="file" id="fileexcel" accept=".xls" required>
                                 </div>
                             </div>
+                            
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-success btn-sm w-100" type="button" onclick="uploadfile()" >Upload</button>
@@ -69,37 +71,47 @@
             function uploadfile(){
                 var docname = $("#doc_name").val();     
                 var file = document.getElementById('fileexcel').files[0];
-                var formdata = new FormData(); 
-                formdata.append('doc_name', docname);
-                formdata.append('uploadorder', file);
-                formdata.append('type', "uploadfile");
+                $("#form_oreder").addClass("was-validated");
+                if(docname && file){
+                    var formdata = new FormData(); 
+                    formdata.append('doc_name', docname);
+                    formdata.append('uploadorder', file);
+                    formdata.append('type', "uploadfile");
                 
-                $.ajax({
-                    type: "POST",
-                    encType: "multipart/form-data",
-                    url: "UploadFile",
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    data: formdata,
-                    success: function(data){
-                        if(!data){
-                            Swal.fire({
-                                title:"ผิดพลาด",
-                                text:"ไม่สามรถ Upload File ได้",
-                                icon:"error"
-                            })
-                        }else{ 
-                            $("#mytable").html(data);
-                            $("#table_upload").DataTable({
-                                scrollX: true
-                            });
+                    $.ajax({
+                        type: "POST",
+                        encType: "multipart/form-data",
+                        url: "UploadFile",
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        data: formdata,
+                        success: function(data){
+                            if(!data){
+                                Swal.fire({
+                                    title:"ผิดพลาด",
+                                    text:"ไม่สามรถ Upload File ได้",
+                                    icon:"error"
+                                })
+                            }else{ 
+                                $("#mytable").html(data);
+                                $("#table_upload").DataTable({
+                                    scrollX: true
+                                });
+                            }
+                        },
+                        error: function(msg){
+                            console.log(msg);
                         }
-                    },
-                    error: function(msg){
-                        console.log(msg);
-                    }
-                });
+                    });
+                }else{
+                    Swal.fire({
+                        title:"ผิดพลาด",
+                        text:"กรุณากรอกข้อมูลให้ถูกต้อง",
+                        icon:"error"
+                    })
+                }
+                
             }
             
             $(document).ready(function() {

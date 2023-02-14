@@ -22,15 +22,9 @@
                 getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
             }
 
-            String productstatus = "";
-
-            if (request.getParameter("status").equalsIgnoreCase("new")) {
-                productstatus = "สร้างเอกสารเรียบร้อย";
-            } else if (request.getParameter("status").equalsIgnoreCase("packingbagsucces")) {
-                productstatus = "จัดสินค้าใส่ถุงเรียบร้อย";
-            } else if (request.getParameter("status").equalsIgnoreCase("packingboxsucces")) {
-                productstatus = "จัดสินค้าใส่กล่องเรียบร้อย";
-            }
+            String doc_id = (String) request.getAttribute("doc_id");
+            String doc_name = (String) request.getAttribute("doc_name");
+            String doc_status = (String) request.getAttribute("doc_status");
 
         %>
         <%@ include file="share/navbar.jsp" %>
@@ -45,13 +39,13 @@
                             <div class="row  ">
                                 <div class="col-sm-12 col-md-12 ">
                                     <div class="row mx-2 justify-content-center">
-                                        เลขที่เอกสาร : <%=request.getParameter("id")%>
+                                        เลขที่เอกสาร : <%=doc_id%>
                                     </div>
                                     <div class="row mt-3 mx-2 justify-content-center">
-                                        ชื่อเอกสาร : <%=request.getParameter("name")%>
+                                        ชื่อเอกสาร :  <%=doc_name%>
                                     </div>
                                     <div class="row mt-3 mx-2 justify-content-center">
-                                        สถานะ : <%=productstatus%>
+                                        สถานะ :  <%=doc_status%>
                                     </div>
                                 </div>
                             </div>
