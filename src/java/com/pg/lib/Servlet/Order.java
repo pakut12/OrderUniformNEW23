@@ -49,35 +49,26 @@ public class Order extends HttpServlet {
 
                     //สร้างตาราง doc_list
                     String html = "";
-                    html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_listdoc'>";
+                    html += "<table class='table text-nowrap table-bordered table-sm text-center w-100' id='table_listdoc'>";
                     html += "<thead>";
                     html += "<tr>";
-                    html += "<th>ลำดับ</th>";
-                    html += "<th>เลขที่เอกสาร</th>";
-                    html += "<th>ชื่อเอกสาร</th>";
-                    html += "<th>สถานะ</th>";
-                    html += "<th>วันที่สร้าง</th>";
+                    html += "<th class='text-center'>ลำดับ</th>";
+                    html += "<th class='text-center'>เลขที่เอกสาร</th>";
+                    html += "<th class='text-center'>ชื่อเอกสาร</th>";
+                    html += "<th class='text-center'>ชื่อไฟล์ Excel</th>";
+                    html += "<th class='text-center'>สถานะ</th>";
+                    html += "<th class='text-center'>วันที่สร้าง</th>";
                     html += "</tr>";
                     html += "</thead>";
                     html += "<tbody>";
                     int n = 1;
                     for (OUDocList orderdetail : listdoc) {
-                        if (orderdetail.getDoc_status().equalsIgnoreCase("new")) {
-                            status = "<div class='text-success fw-bold'>สร้างเอกสารเรียบร้อย</div>";
-                            outputstatus = "สร้างเอกสารเรียบร้อย";
-                        } else if (orderdetail.getDoc_status().equalsIgnoreCase("packingbagsucces")) {
-                            status = "<div class='text-success fw-bold'>จัดสินค้าใส่ถุงเรียบร้อย</div>";
-                            outputstatus = "จัดสินค้าใส่ถุงเรียบร้อย";
-                        } else if (orderdetail.getDoc_status().equalsIgnoreCase("packingboxsucces")) {
-                            status = "<div class='text-success fw-bold'>จัดสินค้าใส่กล่องเรียบร้อย</div>";
-                            outputstatus = "จัดสินค้าใส่กล่องเรียบร้อย";
-                        }
-
                         html += "<tr>";
                         html += "<td>" + n + "</td>";
                         html += "<td><a href='Order?id=" + orderdetail.getDoc_id() + "&type=transactionorder'>" + orderdetail.getDoc_id() + "</a></td>";
                         html += "<td>" + orderdetail.getDoc_name() + "</td>";
-                        html += "<td >" + status + "</td>";
+                        html += "<td>" + orderdetail.getDoc_filename() + "</td>";
+                        html += "<td><a href='Order?type=statusorder&doc_id=" + orderdetail.getDoc_id() + "'>ดูสถานะ</a></td>";
                         html += "<td>" + orderdetail.getDate_create() + "</td>";
                         html += "</tr>";
                         n++;
@@ -115,8 +106,8 @@ public class Order extends HttpServlet {
                     request.setAttribute("doc_id", doc_id);
                     request.setAttribute("doc_name", doc_name);
                     request.setAttribute("doc_status", outputstatus);
-              
-                    
+
+
                     getServletContext().getRequestDispatcher("/displayorder.jsp").forward(request, response);
                 } else if (type.equals("printorder")) {
                     String id = request.getParameter("id").trim();
@@ -144,51 +135,55 @@ public class Order extends HttpServlet {
                     String customer_id = request.getParameter("customer_id");
 
                     OrderService order = new OrderService();
-                    List<OUUploadOrder> listorder = order.getorderlistbydocid(doc_id);
-
-
+                    // List<OUUploadOrder> listorder = order.getorderlistbydocid(doc_id); // getorderall
+                    List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, customer_id);
                     String html = "";
-                    html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_order'>";
-                    html += "<thead>";
-                    html += "<tr>";
-                    html += "<th>ลำดับ</th>";
-                    html += "<th>เลขที่คำสั้งซื้อ</th>";
-                    html += "<th>รหัสสินค้า</th>";
-                    html += "<th>รหัสบาร์โค้ต</th>";
-                    html += "<th>ชื่อสินค้า</th>";
-                    html += "<th>สี</th>";
-                    html += "<th>ไซร์</th>";
-                    html += "<th>Mat_Group</th>";
-                    html += "<th>Mat_Name</th>";
-                    html += "<th>จำนวนที่ขาย</th>";
-                    html += "<th>ราคาต้นทุน</th>";
-                    html += "<th>ราคาขาย</th>";
-                    html += "</tr>";
-                    html += "</thead>";
-                    html += "<tbody>";
-                    int n = 1;
-                    for (OUUploadOrder orderdetail : listorder) {
-                        String color = orderdetail.getOrder_product_id().substring(10, 12);
-                        String size = orderdetail.getOrder_product_id().substring(12, 18);
-
+                    if (listorder.size() > 0) {
+                        html += "<table class='table text-nowrap table-bordered table-striped table-sm text-center w-100' id='table_order'>";
+                        html += "<thead>";
                         html += "<tr>";
-                        html += "<td>" + n + "</td>";
-                        html += "<td><b>เลขที่คำสั้งซื้อ : </b>" + orderdetail.getReceipt_id() + "<br><b>รหัสพนักงาน : </b>" + orderdetail.getOrder_cms_id() + "<br><b>ชื่อนามสกุล : </b>" + orderdetail.getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + orderdetail.getOrder_cms_company() + "<br><b>เเผนก : </b>" + orderdetail.getOrder_cms_department() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_product_id() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_product_barcode() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_product_name() + "</td>";
-                        html += "<td>" + color + "</td>";
-                        html += "<td>" + size + "</td>";
-                        html += "<td>" + orderdetail.getOrder_mat_group() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_mat_name() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_product_qty() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_price_exc_vat() + "</td>";
-                        html += "<td>" + orderdetail.getOrder_price_inc_vat() + "</td>";
+                        html += "<th>ลำดับ</th>";
+                        html += "<th>เลขที่คำสั้งซื้อ</th>";
+                        html += "<th>รหัสสินค้า</th>";
+                        html += "<th>รหัสบาร์โค้ต</th>";
+                        html += "<th>ชื่อสินค้า</th>";
+                        html += "<th>สี</th>";
+                        html += "<th>ไซร์</th>";
+                        html += "<th>Mat_Group</th>";
+                        html += "<th>Mat_Name</th>";
+                        html += "<th>จำนวนที่ขาย</th>";
+                        html += "<th>ราคาต้นทุน</th>";
+                        html += "<th>ราคาขาย</th>";
                         html += "</tr>";
-                        n++;
+                        html += "</thead>";
+                        html += "<tbody>";
+                        int n = 1;
+                        for (OUUploadOrder orderdetail : listorder) {
+                            String color = orderdetail.getOrder_product_id().substring(10, 12);
+                            String size = orderdetail.getOrder_product_id().substring(12, 18);
+
+                            html += "<tr>";
+                            html += "<td>" + n + "</td>";
+                            html += "<td><b>เลขที่คำสั้งซื้อ : </b>" + orderdetail.getReceipt_id() + "<br><b>รหัสพนักงาน : </b>" + orderdetail.getOrder_cms_id() + "<br><b>ชื่อนามสกุล : </b>" + orderdetail.getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + orderdetail.getOrder_cms_company() + "<br><b>เเผนก : </b>" + orderdetail.getOrder_cms_department() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_product_id() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_product_barcode() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_product_name() + "</td>";
+                            html += "<td>" + color + "</td>";
+                            html += "<td>" + size + "</td>";
+                            html += "<td>" + orderdetail.getOrder_mat_group() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_mat_name() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_product_qty() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_price_exc_vat() + "</td>";
+                            html += "<td>" + orderdetail.getOrder_price_inc_vat() + "</td>";
+                            html += "</tr>";
+                            n++;
+                        }
+                        html += "</tbody>";
+                        html += "</table>";
+                    } else {
+                        html += "";
                     }
-                    html += "</tbody>";
-                    html += "</table>";
+
 
                     out.print(html);
 
@@ -220,7 +215,7 @@ public class Order extends HttpServlet {
                     SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
                     Date date = new Date();
                     String todey = dt.format(date);
-
+                     
                     request.setAttribute("date", todey);
                     request.setAttribute("doc_id", doc_id);
                     request.setAttribute("customer_num", customer_num);
@@ -245,9 +240,10 @@ public class Order extends HttpServlet {
                     out.print(obj);
                 } else if (type.equals("confirmbag")) {
                     String doc_id = request.getParameter("doc_id");
+                    String customer_id = request.getParameter("customer_id");
 
                     OrderService order = new OrderService();
-                    Boolean statusconfimbag = order.ConfirmBag(doc_id);
+                    Boolean statusconfimbag = order.ConfirmBag(doc_id, customer_id);
 
                     JSONObject obj = new JSONObject();
                     if (statusconfimbag) {
@@ -269,8 +265,24 @@ public class Order extends HttpServlet {
                         obj.put("status", "false");
                     }
 
-
                     out.print(obj);
+                } else if (type.equals("statusorder")) {
+                    String doc_id = request.getParameter("doc_id");
+
+                    OrderService order = new OrderService();
+                    List<OUUploadOrder> listordercustomer = order.getorderlistbydocidsortbycustomer(doc_id);
+                    List<OUUploadOrder> listpackingbagsuccess = order.getorderlistpackingbagsuccessbydocid(doc_id);
+                    List<OUUploadOrder> listpackingbagerror = order.getorderlistpackingbagerrorbydocid(doc_id);
+
+
+                    request.setAttribute("doc_id", doc_id);
+                    request.setAttribute("listordercustomer", listordercustomer);
+                    request.setAttribute("listdoc", order.getDocByid(doc_id));
+                    request.setAttribute("listordercustomertotal", listordercustomer.size());
+                    request.setAttribute("listpackingbagsuccess", listpackingbagsuccess.size());
+                    request.setAttribute("listpackingbagerror", listpackingbagerror.size());
+
+                    getServletContext().getRequestDispatcher("/displaystatusorder.jsp").forward(request, response);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

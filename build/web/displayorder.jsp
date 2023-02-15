@@ -47,13 +47,15 @@
                                     <div class="row mt-3 mx-2 justify-content-center">
                                         สถานะ :  <%=doc_status%>
                                     </div>
+                                    <input type="hidden" id="doc_name" value="<%=doc_name%>">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-end">
-                        <button class="btn btn-success mt-4" type="button" onclick="packingbag()">PackingBag</button>
-                        <button class="btn btn-primary mt-4" type="button" onclick="packingbox()">PackingBox</button>
+                        <button class="btn btn-outline-secondary mt-4" type="button" onclick="printbarcodebag()">PrintBarcodeBag</button>
+                        <button class="btn btn-outline-success mt-4" type="button" onclick="packingbag()">PackingBag</button>
+                        <button class="btn btn-outline-primary mt-4" type="button" onclick="packingbox()">PackingBox</button>
                     </div>
                     <nav class="">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -199,8 +201,14 @@
             <%@ include file="share/footer.jsp" %>
         </footer>
         <script>
+            function printbarcodebag(){
+                var doc_name = $("#doc_name").val();
+                var url  = 'Order?type=printorder&name='+doc_name+'&id=<%=request.getParameter("id")%>';
+                window.location.href = url ;
+                
+            }
             function packingbag(){
-                var url  = 'packingbag.jsp?doc_id=<%=request.getParameter("id")%>';
+                var url  = 'packingbag.jsp';
                 window.location.href = url ;
             }
           
@@ -213,6 +221,7 @@
                 var groupColumn = 1;
                 var table = $('#table_order').DataTable({
                     scrollY: "50vh",
+                    scrollX:true,
                     scrollCollapse: true,
                         
                     columnDefs: [{ visible: false, targets: groupColumn }],
@@ -253,6 +262,7 @@
             function setTabalTransactionsortbycustomer(){
                 $('#table_ordersortbycustomer').DataTable({
                     scrollY: "50vh",
+                    scrollX:true,
                     scrollCollapse: true
                     
                 })
@@ -262,6 +272,7 @@
                 var groupColumn = 1;
                 var table = $('#table_ordersortbysize').DataTable({
                     scrollY: "50vh",
+                    scrollX:true,
                     scrollCollapse: true,
                         
                     columnDefs: [{ visible: false, targets: groupColumn }],

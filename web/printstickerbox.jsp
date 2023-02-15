@@ -45,10 +45,11 @@
     <body>
         <%
             try {
+                OrderService order = new OrderService();
                 String doc_id = (String) request.getAttribute("doc_id");
                 String customer_num = (String) request.getAttribute("customer_num");
-                String doc_name = (String) request.getParameter("doc_name");
-                OrderService order = new OrderService();
+          
+                
 
                 //List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, customer_id);
                 List<OUDepartment> listdepartment = order.getDepartment(doc_id);
@@ -63,7 +64,7 @@
                         html += "<table class='table text-nowrap table-bordered  table-sm text-center w-100 border border-dark page-break' id='table_order'>";
                         html += "<thead>";
                         html += "<tr>";
-                        html += "<th class='p-0 h5 text-center' colspan='2'>" + doc_name + "</th>";
+                        html += "<th class='p-0 h5 text-center' colspan='2'>" + listdepartment.get(0).getDoc_name() + "</th>";
                         html += "<th class='p-0 h5 text-center' colspan='2'>Box : " + (x + 1) + "/" + Math.round(box_num) + "</th>";
                         html += "</tr>";
                         html += "<tr>";

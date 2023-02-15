@@ -33,7 +33,8 @@
                         <ol>
                             <li>ไปที่หน้า ListOrder [<a href="manageorder.jsp">ListOrder </a>]</li>
                             <li>เลือกเอกสารที่ต้องการหลังจากกดไปที่เลขที่เอกสารที่เลือก</li>
-                            <li>กดปุ่ม PackingBag</li>
+                            <li>กดปุ่ม PrintBarcodeBag เเละ printbarcode เพื่อที่จะยิงในระบบ</li>
+                            <li>ยิงกดปุ่ม PackingBag</li>
                             <li>กดปุ่ม PrintSticker เเละจัดสินค้าให้เสร็จทั้งหมด</li>
                             <li>กดปุ่ม Confirm <b class="text-danger"># คำเเนะนำ ต้องกดหลังจากจัดสินค้าใส่ถุงครบทั้งหมดเเล้วเท่านั้น</b> </li>
                         </ol>

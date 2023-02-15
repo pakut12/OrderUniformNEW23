@@ -48,7 +48,9 @@
                     success:function(msg){
                         $("#listdoc").html(msg);
                         $("#table_listdoc").DataTable({
-                        
+                            scrollY: "50vh",
+                            scrollX:true,
+                            scrollCollapse: true
                         });
                         console.log(msg);
                     }

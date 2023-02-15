@@ -13,6 +13,15 @@ public class OUDocList {
     private String doc_id;
     private String doc_name;
     private String doc_status;
+    private String doc_filename;
+
+    public String getDoc_filename() {
+        return doc_filename;
+    }
+
+    public void setDoc_filename(String doc_filename) {
+        this.doc_filename = doc_filename;
+    }
 
     public String getDoc_status() {
         return doc_status;
@@ -21,7 +30,6 @@ public class OUDocList {
     public void setDoc_status(String doc_status) {
         this.doc_status = doc_status;
     }
-    
     private String date_create;
 
     public String getDate_create() {

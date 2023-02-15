@@ -57,63 +57,122 @@
     </style>
     <body>
         <%
+            /* print all
+            try {
+            String doc_id = (String) request.getAttribute("doc_id");
+            String customer_id = (String) request.getAttribute("customer_id");
+            
+            OrderService order = new OrderService();
+            List<OUUploadOrder> orderid = order.getorderlistbydocidsortbycustomer(doc_id);
+            
+            for (OUUploadOrder id : orderid) {
+            List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, id.getOrder_cms_id());
+            String html = "";
+            html += "<table class='table text-nowrap table-bordered  table-sm text-center border border-dark w-100 page-break' id='table_order'>";
+            html += "<thead>";
+            html += "<tr>";
+            html += "<th class='p-0' colspan='7'><b>รหัสพนักงาน : </b>" + listorder.get(0).getOrder_cms_id() + "      ||    <b>ชื่อนามสกุล : </b>" + listorder.get(0).getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + listorder.get(0).getOrder_cms_company() + "   ||  <b>เเผนก : </b>" + listorder.get(0).getOrder_cms_department() + "</th>";
+            html += "</tr>";
+            html += "<tr>";
+            html += "<th class='p-0'>ลำดับ</th>";
+            html += "<th class='p-0'>รหัสสินค้า</th>";
+            // html += "<th class='p-0'>รหัสบาร์โค้ต</th>";
+            html += "<th class='p-0'>ชื่อสินค้า</th>";
+            html += "<th class='p-0'>สี</th>";
+            html += "<th class='p-0'>ไซร์</th>";
+            html += "<th class='p-0'>จำนวนที่ขาย</th>";
+            html += "</tr>";
+            html += "</thead>";
+            html += "<tbody>";
+            int n = 1;
+            int sum = 0;
+            for (OUUploadOrder orderdetail : listorder) {
+            String color = orderdetail.getOrder_product_id().substring(10, 12);
+            String size = orderdetail.getOrder_product_id().substring(12, 18);
+            
+            html += "<tr>";
+            html += "<td class='p-0'>" + n + "</td>";
+            html += "<td class='p-0'>" + orderdetail.getOrder_product_id() + "</td>";
+            //  html += "<td class='p-0'>" + orderdetail.getOrder_product_barcode() + "</td>";
+            html += "<td class='p-0'>" + orderdetail.getOrder_product_name() + "</td>";
+            html += "<td class='p-0'>" + color + "</td>";
+            html += "<td class='p-0'>" + size + "</td>";
+            html += "<td class='p-0'>" + orderdetail.getOrder_product_qty() + "</td>";
+            html += "</tr>";
+            
+            sum += Integer.parseInt(orderdetail.getOrder_product_qty());
+            n++;
+            }
+            html += "</tbody>";
+            html += "<tfoot>";
+            html += "<tr>";
+            html += "<td colspan='5' class='p-0 text-center'><b>รวม</b></td>";
+            html += "<td class='p-0 text-center'>" + sum + "</td>";
+            html += "</tr>";
+            html += "</tfoot>";
+            html += "</table>";
+            
+            out.print(html);
+            
+            }
+            } catch (Exception e) {
+            e.printStackTrace();
+            }
+             */
+
             try {
                 String doc_id = (String) request.getAttribute("doc_id");
                 String customer_id = (String) request.getAttribute("customer_id");
 
                 OrderService order = new OrderService();
-                List<OUUploadOrder> orderid = order.getorderlistbydocidsortbycustomer(doc_id);
+                List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, customer_id);
+                String html = "";
+                html += "<table class='table text-nowrap table-bordered  table-sm text-center border border-dark w-100 page-break' id='table_order'>";
+                html += "<thead>";
+                html += "<tr>";
+                html += "<th class='p-0' colspan='7'><b>รหัสพนักงาน : </b>" + listorder.get(0).getOrder_cms_id() + "      ||    <b>ชื่อนามสกุล : </b>" + listorder.get(0).getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + listorder.get(0).getOrder_cms_company() + "   ||  <b>เเผนก : </b>" + listorder.get(0).getOrder_cms_department() + "</th>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<th class='p-0'>ลำดับ</th>";
+                html += "<th class='p-0'>รหัสสินค้า</th>";
+                // html += "<th class='p-0'>รหัสบาร์โค้ต</th>";
+                html += "<th class='p-0'>ชื่อสินค้า</th>";
+                html += "<th class='p-0'>สี</th>";
+                html += "<th class='p-0'>ไซร์</th>";
+                html += "<th class='p-0'>จำนวนที่ขาย</th>";
+                html += "</tr>";
+                html += "</thead>";
+                html += "<tbody>";
+                int n = 1;
+                int sum = 0;
+                for (OUUploadOrder orderdetail : listorder) {
+                    String color = orderdetail.getOrder_product_id().substring(10, 12);
+                    String size = orderdetail.getOrder_product_id().substring(12, 18);
 
-                for (OUUploadOrder id : orderid) {
-                    List<OUUploadOrder> listorder = order.getorderlistbydocidandcustomerid(doc_id, id.getOrder_cms_id());
-                    String html = "";
-                    html += "<table class='table text-nowrap table-bordered  table-sm text-center border border-dark w-100 page-break' id='table_order'>";
-                    html += "<thead>";
                     html += "<tr>";
-                    html += "<th class='p-0' colspan='7'><b>รหัสพนักงาน : </b>" + listorder.get(0).getOrder_cms_id() + "      ||    <b>ชื่อนามสกุล : </b>" + listorder.get(0).getOrder_cms_fullname() + "<br><b>บริษัท : </b>" + listorder.get(0).getOrder_cms_company() + "   ||  <b>เเผนก : </b>" + listorder.get(0).getOrder_cms_department() + "</th>";
+                    html += "<td class='p-0'>" + n + "</td>";
+                    html += "<td class='p-0'>" + orderdetail.getOrder_product_id() + "</td>";
+                    //  html += "<td class='p-0'>" + orderdetail.getOrder_product_barcode() + "</td>";
+                    html += "<td class='p-0'>" + orderdetail.getOrder_product_name() + "</td>";
+                    html += "<td class='p-0'>" + color + "</td>";
+                    html += "<td class='p-0'>" + size + "</td>";
+                    html += "<td class='p-0'>" + orderdetail.getOrder_product_qty() + "</td>";
                     html += "</tr>";
-                    html += "<tr>";
-                    html += "<th class='p-0'>ลำดับ</th>";
-                    html += "<th class='p-0'>รหัสสินค้า</th>";
-                   // html += "<th class='p-0'>รหัสบาร์โค้ต</th>";
-                    html += "<th class='p-0'>ชื่อสินค้า</th>";
-                    html += "<th class='p-0'>สี</th>";
-                    html += "<th class='p-0'>ไซร์</th>";
-                    html += "<th class='p-0'>จำนวนที่ขาย</th>";
-                    html += "</tr>";
-                    html += "</thead>";
-                    html += "<tbody>";
-                    int n = 1;
-                    int sum = 0;
-                    for (OUUploadOrder orderdetail : listorder) {
-                        String color = orderdetail.getOrder_product_id().substring(10, 12);
-                        String size = orderdetail.getOrder_product_id().substring(12, 18);
 
-                        html += "<tr>";
-                        html += "<td class='p-0'>" + n + "</td>";
-                        html += "<td class='p-0'>" + orderdetail.getOrder_product_id() + "</td>";
-                      //  html += "<td class='p-0'>" + orderdetail.getOrder_product_barcode() + "</td>";
-                        html += "<td class='p-0'>" + orderdetail.getOrder_product_name() + "</td>";
-                        html += "<td class='p-0'>" + color + "</td>";
-                        html += "<td class='p-0'>" + size + "</td>";
-                        html += "<td class='p-0'>" + orderdetail.getOrder_product_qty() + "</td>";
-                        html += "</tr>";
-
-                        sum += Integer.parseInt(orderdetail.getOrder_product_qty());
-                        n++;
-                    }
-                    html += "</tbody>";
-                    html += "<tfoot>";
-                    html += "<tr>";
-                    html += "<td colspan='5' class='p-0 text-center'><b>รวม</b></td>";
-                    html += "<td class='p-0 text-center'>" + sum + "</td>";
-                    html += "</tr>";
-                    html += "</tfoot>";
-                    html += "</table>";
-
-                    out.print(html);
-
+                    sum += Integer.parseInt(orderdetail.getOrder_product_qty());
+                    n++;
                 }
+                html += "</tbody>";
+                html += "<tfoot>";
+                html += "<tr>";
+                html += "<td colspan='5' class='p-0 text-center'><b>รวม</b></td>";
+                html += "<td class='p-0 text-center'>" + sum + "</td>";
+                html += "</tr>";
+                html += "</tfoot>";
+                html += "</table>";
+
+                out.print(html);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -63,8 +63,8 @@
                             </div>
                             
                             <div class="col-sm-12 col-md-auto">
-                                <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker" >PrintSticker</button> 
-                                <button class="btn btn-sm btn-success" type="button" id="bt_confirm" >Confirm</button> 
+                                <button class="btn btn-sm btn-primary" type="button" id="bt_printsticker" disabled >PrintSticker</button> 
+                                <button class="btn btn-sm btn-success" type="button" id="bt_confirm" disabled >Confirm</button> 
                             </div>
                         </div>
                         <div id="list_table">
@@ -80,7 +80,7 @@
         <script>
             
             function getorderbycustomerid(){
-                var barcode = $("#Barcode").val().split("/");
+                var barcode = $("#Barcode").val().trim().split("/");
                 var doc_id = barcode[0];
                 var customer_id = barcode[1];
               
@@ -94,41 +94,52 @@
                             doc_id:doc_id
                         },
                         success:function(msg){
-                            $("#list_table").html(msg);
-                            var groupColumn = 1;
-                            var table = $('#table_order').DataTable({
-                                scrollY: "50vh",
-                                scrollCollapse: true,
-                                columnDefs: [{ visible: false, targets: groupColumn }],
-                                order: [[groupColumn, 'asc']],
-                                displayLength: 25,
-                                drawCallback: function (settings) {
-                                    var api = this.api();
-                                    var rows = api.rows({ page: 'current' }).nodes();
-                                    var last = null;
-                                    api
-                                    .column(groupColumn, { page: 'current' })
-                                    .data()
-                                    .each(function (group, i) {
-                                        if (last !== group) {
-                                            $(rows)
-                                            .eq(i)
-                                            .before('<tr class="group"><td colspan="13" class="text-start p-2" style="background-color:#ddd">' + group + '</td></tr>');
-                                            last = group;
-                                        }
-                                    });
-                                }
-                            });
+                            if(msg == ""){
+                                Swal.fire({
+                                    title:"ผิดพลาด",
+                                    icon:"error",
+                                    text:"ไม่พบข้อมูล"
+                                })
+                            }else{
+                                $("#bt_printsticker").attr("disabled",false);
+                                $("#bt_confirm").attr("disabled",false);
+                                $("#list_table").html(msg);
+                                var groupColumn = 1;
+                                var table = $('#table_order').DataTable({
+                                    scrollY: "50vh",
+                                    scrollCollapse: true,
+                                    columnDefs: [{ visible: false, targets: groupColumn }],
+                                    order: [[groupColumn, 'asc']],
+                                    displayLength: 25,
+                                    drawCallback: function (settings) {
+                                        var api = this.api();
+                                        var rows = api.rows({ page: 'current' }).nodes();
+                                        var last = null;
+                                        api
+                                        .column(groupColumn, { page: 'current' })
+                                        .data()
+                                        .each(function (group, i) {
+                                            if (last !== group) {
+                                                $(rows)
+                                                .eq(i)
+                                                .before('<tr class="group"><td colspan="13" class="text-start p-2" style="background-color:#ddd">' + group + '</td></tr>');
+                                                last = group;
+                                            }
+                                        });
+                                    }
+                                });
  
-                            // Order by the grouping
-                            $('#table_order tbody').on('click', 'tr.group', function () {
-                                var currentOrder = table.order()[0];
-                                if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
-                                    table.order([groupColumn, 'desc']).draw();
-                                } else {
-                                    table.order([groupColumn, 'asc']).draw();
-                                }
-                            });
+                                // Order by the grouping
+                                $('#table_order tbody').on('click', 'tr.group', function () {
+                                    var currentOrder = table.order()[0];
+                                    if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
+                                        table.order([groupColumn, 'desc']).draw();
+                                    } else {
+                                        table.order([groupColumn, 'asc']).draw();
+                                    }
+                                });
+                            }
+                            
                         }
                     })  
                 }
@@ -182,7 +193,8 @@
                                     url:"Order",
                                     data:{
                                         type:"confirmbag",
-                                        doc_id:doc_id
+                                        doc_id:doc_id,
+                                        customer_id:customer_id
                                     },
                                     success:function(msg){
                                         var decode = JSON.parse(msg);
@@ -192,9 +204,7 @@
                                                 icon:"success",
                                                 text:"ยืนยันสำเร็จ"
                                             })
-                                            setTimeout(function(){
-                                                window.location.href = "manageorder.jsp";
-                                            },1000);
+                                          
                                         }else if(decode.status == "false"){
                                             Swal.fire({
                                                 title:"ยืนยัน",
@@ -202,6 +212,10 @@
                                                 text:"ยืนยันไม่สำเร็จ"
                                             })
                                         }
+                                        setTimeout(function(){
+                                            location.reload();
+                                        },1500)
+                                        
                                     }
                                 })
                             }

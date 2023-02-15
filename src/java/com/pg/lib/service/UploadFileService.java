@@ -47,6 +47,7 @@ public class UploadFileService {
                         }
                         //value return;
                         result.put("path", path);
+                        result.put("filename", item.getName());
                     }
 
                     //other 

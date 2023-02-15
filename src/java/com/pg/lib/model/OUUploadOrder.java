@@ -26,6 +26,15 @@ public class OUUploadOrder {
     private String order_price_exc_vat;
     private String order_price_inc_vat;
     private String order_sum;
+    private String order_status;
+
+    public String getOrder_status() {
+        return order_status;
+    }
+
+    public void setOrder_status(String order_status) {
+        this.order_status = order_status;
+    }
 
     public String getOrder_sum() {
         return order_sum;

@@ -63,14 +63,15 @@ public class OrderService {
         return status;
     }
 
-    public Boolean ConfirmBag(String doc_id) throws SQLException {
+    public Boolean ConfirmBag(String doc_id, String customer_id) throws SQLException {
         Boolean status = null;
-        String sql = "UPDATE ounew_transaction SET doc_status = ? WHERE doc_id = ?";
+        String sql = "UPDATE ounew_orderupload SET order_status = ? WHERE doc_id = ? and order_cms_id = ?";
         try {
             conn = ConnectDB.getConnection();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, "packingbagsucces");
+            ps.setString(1, "success");
             ps.setString(2, doc_id);
+            ps.setString(3, customer_id);
             if (ps.executeUpdate() > 0) {
                 status = true;
             } else {
@@ -82,14 +83,13 @@ public class OrderService {
         } finally {
             ConnectDB.closeConnection(conn);
             ps.close();
-
         }
         return status;
     }
 
     public List<OUDepartment> getDepartment(String doc_id) throws SQLException {
         List<OUDepartment> listdepartment = new ArrayList();
-        String sql = "SELECT doc_name, order_cms_department FROM ounew_orderupload a INNER JOIN ounew_transaction b ON b.doc_id = a.doc_id WHERE b.doc_id = ? GROUP BY order_cms_department";
+        String sql = "SELECT doc_name, order_cms_department FROM ounew_orderupload a INNER JOIN ounew_transaction b ON b.doc_id = a.doc_id WHERE b.doc_id = ? GROUP BY doc_name,order_cms_department";
         try {
             conn = ConnectDB.getConnection();
             ps = conn.prepareStatement(sql);
@@ -111,10 +111,10 @@ public class OrderService {
         return listdepartment;
     }
 
-    public Boolean addorderdoc(String docname) throws ClassNotFoundException, SQLException, NamingException {
+    public Boolean addorderdoc(String docname, String filename) throws ClassNotFoundException, SQLException, NamingException {
         Boolean status = null;
         int primarykey = getdocid() + 1;
-        String sql = "INSERT INTO ounew_transaction (doc_id, doc_name, doc_status, date_create) VALUES (?, ?, ?, TO_DATE(?, 'YYYY-MM-DD HH24:MI:SS'))";
+        String sql = "INSERT INTO ounew_transaction (doc_id, doc_name, doc_status, date_create,doc_filename) VALUES (?, ?, ?, TO_DATE(?, 'YYYY-MM-DD HH24:MI:SS'),?)";
         try {
             conn = ConnectDB.getConnection();
             ps = conn.prepareStatement(sql);
@@ -122,6 +122,7 @@ public class OrderService {
             ps.setString(2, docname);
             ps.setString(3, "new");
             ps.setString(4, getDate());
+            ps.setString(5, filename);
 
             if (ps.executeUpdate() > 0) {
                 status = true;
@@ -312,6 +313,7 @@ public class OrderService {
                 doc.setDoc_name(rs.getString("doc_name"));
                 doc.setDoc_status(rs.getString("doc_status"));
                 doc.setDate_create(rs.getString("date_create"));
+                doc.setDoc_filename(rs.getString("doc_filename"));
                 listorder.add(doc);
             }
         } catch (Exception e) {
@@ -365,7 +367,7 @@ public class OrderService {
 
     public List<OUUploadOrder> getorderlistbydocidwithdepartment(String id, String department) throws ClassNotFoundException, SQLException, NamingException {
         List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
-        String sql = "SELECT * FROM ounew_orderupload WHERE doc_id = ? AND order_cms_department = ? GROUP BY order_cms_id,order_cms_fullname,order_cms_company,order_cms_department";
+        String sql = "SELECT order_cms_fullname,order_cms_company,order_cms_department FROM ounew_orderupload WHERE doc_id = ? AND order_cms_department = ? GROUP BY order_cms_fullname,order_cms_company,order_cms_department";
         try {
             conn = ConnectDB.getConnection();
             ps = conn.prepareStatement(sql);
@@ -374,21 +376,11 @@ public class OrderService {
             rs = ps.executeQuery();
             while (rs.next()) {
                 OUUploadOrder order = new OUUploadOrder();
-                order.setOrder_id(rs.getString("order_id"));
-                order.setDoc_id(rs.getString("doc_id"));
-                order.setReceipt_id(rs.getString("receipt_id"));
-                order.setOrder_cms_id(rs.getString("order_cms_id"));
+                ;
                 order.setOrder_cms_fullname(rs.getString("order_cms_fullname"));
                 order.setOrder_cms_company(rs.getString("order_cms_company"));
                 order.setOrder_cms_department(rs.getString("order_cms_department"));
-                order.setOrder_product_id(rs.getString("order_product_id"));
-                order.setOrder_product_barcode(rs.getString("order_product_barcode"));
-                order.setOrder_product_name(rs.getString("order_product_name"));
-                order.setOrder_mat_group(rs.getString("order_mat_group"));
-                order.setOrder_mat_name(rs.getString("order_mat_name"));
-                order.setOrder_product_qty(rs.getString("order_product_qty"));
-                order.setOrder_price_exc_vat(rs.getString("order_price_exc_vat"));
-                order.setOrder_price_inc_vat(rs.getString("order_price_inc_vat"));
+                
                 listorder.add(order);
             }
         } catch (Exception e) {
@@ -440,7 +432,7 @@ public class OrderService {
 
     public List<OUUploadOrder> getorderlistbydocidsortbycustomer(String id) throws ClassNotFoundException, SQLException, NamingException {
         List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
-        String sql = "SELECT order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ounew_orderupload WHERE doc_id = ? GROUP BY order_cms_id,order_cms_fullname,order_cms_company,order_cms_department ORDER BY order_cms_department";
+        String sql = "SELECT order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ounew_orderupload WHERE doc_id = ? GROUP BY order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department ORDER BY order_cms_department";
         try {
             conn = ConnectDB.getConnection();
             ps = conn.prepareStatement(sql);
@@ -453,6 +445,7 @@ public class OrderService {
                 order.setOrder_cms_company(rs.getString("order_cms_company"));
                 order.setOrder_cms_department(rs.getString("order_cms_department"));
                 order.setOrder_sum(rs.getString("total"));
+                order.setOrder_status(rs.getString("order_status"));
                 listorder.add(order);
             }
         } catch (Exception e) {
@@ -482,6 +475,62 @@ public class OrderService {
                 order.setOrder_mat_group(rs.getString("order_mat_group"));
                 order.setOrder_mat_name(rs.getString("order_mat_name"));
                 order.setOrder_total(rs.getString("order_total"));
+                listorder.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+            rs.close();
+        }
+        return listorder;
+    }
+
+    public List<OUUploadOrder> getorderlistpackingbagerrorbydocid(String id) throws ClassNotFoundException, SQLException, NamingException {
+        List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
+        String sql = "SELECT order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ounew_orderupload WHERE doc_id = ? and order_status='new' GROUP BY order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department ORDER BY order_cms_department";
+        try {
+            conn = ConnectDB.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                OUUploadOrder order = new OUUploadOrder();
+                order.setOrder_cms_id(rs.getString("order_cms_id"));
+                order.setOrder_cms_fullname(rs.getString("order_cms_fullname"));
+                order.setOrder_cms_company(rs.getString("order_cms_company"));
+                order.setOrder_cms_department(rs.getString("order_cms_department"));
+                order.setOrder_sum(rs.getString("total"));
+                order.setOrder_status(rs.getString("order_status"));
+                listorder.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectDB.closeConnection(conn);
+            ps.close();
+            rs.close();
+        }
+        return listorder;
+    }
+
+    public List<OUUploadOrder> getorderlistpackingbagsuccessbydocid(String id) throws ClassNotFoundException, SQLException, NamingException {
+        List<OUUploadOrder> listorder = new ArrayList<OUUploadOrder>();
+        String sql = "SELECT order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department,SUM(order_product_qty) as total  FROM ounew_orderupload WHERE doc_id = ? and order_status='success' GROUP BY order_status,order_cms_id,order_cms_fullname,order_cms_company,order_cms_department ORDER BY order_cms_department";
+        try {
+            conn = ConnectDB.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                OUUploadOrder order = new OUUploadOrder();
+                order.setOrder_cms_id(rs.getString("order_cms_id"));
+                order.setOrder_cms_fullname(rs.getString("order_cms_fullname"));
+                order.setOrder_cms_company(rs.getString("order_cms_company"));
+                order.setOrder_cms_department(rs.getString("order_cms_department"));
+                order.setOrder_sum(rs.getString("total"));
+                order.setOrder_status(rs.getString("order_status"));
                 listorder.add(order);
             }
         } catch (Exception e) {

@@ -53,10 +53,10 @@ public class UploadFile extends HttpServlet {
                     // InsertData
                     OrderService ordersv = new OrderService();
                     Boolean statusuploadfile = ordersv.addorderlist(listorder);
-                    
+
                     String html = "";
                     if (statusuploadfile) {
-                        Boolean docid = ordersv.addorderdoc(list.get("docname"));
+                        Boolean docid = ordersv.addorderdoc(list.get("docname"),list.get("filename"));
                         html += "<div class='text-center h1 fw-bold'>OrderListUpload</div>";
                         html += "<div class='text-center h3 fw-bold'>DOC NAME : " + list.get("docname") + "</div>";
                         html += "<hr class='text-success'>";
@@ -109,24 +109,24 @@ public class UploadFile extends HttpServlet {
 
                 }
 
-            /*
-            for (OUUploadOrder orderdetail : listorder) {
-            System.out.println(orderdetail.getReceipt_id());
-            System.out.println(orderdetail.getOrder_cms_id());
-            System.out.println(orderdetail.getOrder_cms_fullname());
-            System.out.println(orderdetail.getOrder_cms_company());
-            System.out.println(orderdetail.getOrder_cms_department());
-            System.out.println(orderdetail.getOrder_product_id());
-            System.out.println(orderdetail.getOrder_product_barcode());
-            System.out.println(orderdetail.getOrder_product_name());
-            System.out.println(orderdetail.getOrder_mat_group());
-            System.out.println(orderdetail.getOrder_mat_name());
-            System.out.println(orderdetail.getOrder_product_qty());
-            System.out.println(orderdetail.getOrder_price_inc_vat());
-            System.out.println(orderdetail.getOrder_price_exc_vat());
-            System.out.println("------------------------------------------------------------------------------------------------------");
-            }
-             */
+                /*
+                for (OUUploadOrder orderdetail : listorder) {
+                System.out.println(orderdetail.getReceipt_id());
+                System.out.println(orderdetail.getOrder_cms_id());
+                System.out.println(orderdetail.getOrder_cms_fullname());
+                System.out.println(orderdetail.getOrder_cms_company());
+                System.out.println(orderdetail.getOrder_cms_department());
+                System.out.println(orderdetail.getOrder_product_id());
+                System.out.println(orderdetail.getOrder_product_barcode());
+                System.out.println(orderdetail.getOrder_product_name());
+                System.out.println(orderdetail.getOrder_mat_group());
+                System.out.println(orderdetail.getOrder_mat_name());
+                System.out.println(orderdetail.getOrder_product_qty());
+                System.out.println(orderdetail.getOrder_price_inc_vat());
+                System.out.println(orderdetail.getOrder_price_exc_vat());
+                System.out.println("------------------------------------------------------------------------------------------------------");
+                }
+                 */
             } catch (Exception e) {
                 e.printStackTrace();
             }
